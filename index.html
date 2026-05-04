@@ -671,6 +671,37 @@ body{font-family:'Epilogue',sans-serif;background:var(--bg);color:var(--t1);min-
   cursor:pointer;font-size:14px;display:grid;place-items:center;
 }
 .gm-close:hover{color:var(--t1);background:var(--b2)}
+
+/* ══ INLINE QUESTION EDITING ══ */
+.c-qitem{position:relative;}
+.c-qitem-q{cursor:text;}
+.c-qitem-q:hover .q-edit-hint{opacity:1;}
+.q-edit-hint{opacity:0;font-size:9px;color:var(--t3);margin-left:6px;font-family:'JetBrains Mono',monospace;transition:opacity .15s;pointer-events:none;}
+.c-qitem-del{
+  position:absolute;top:8px;right:8px;
+  width:22px;height:22px;border-radius:5px;
+  background:transparent;border:1px solid transparent;
+  color:var(--t3);cursor:pointer;font-size:13px;
+  display:grid;place-items:center;opacity:0;transition:all .15s;
+}
+.c-qitem:hover .c-qitem-del{opacity:1;border-color:var(--b2);}
+.c-qitem-del:hover{background:rgba(239,68,68,.1);border-color:var(--weak)!important;color:var(--weak);}
+.c-qitem-q-input{
+  flex:1;background:transparent;border:none;outline:none;
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--g);line-height:1.55;letter-spacing:.01em;
+  resize:none;width:100%;padding:0;
+}
+.c-qitem-q-input::placeholder{color:var(--t3);font-style:italic;}
+.add-q-btn{
+  display:flex;align-items:center;gap:6px;
+  margin:6px 18px 10px;padding:7px 12px;
+  background:transparent;border:1px dashed var(--b2);
+  border-radius:8px;color:var(--t3);font-family:'JetBrains Mono',monospace;
+  font-size:10px;letter-spacing:.08em;cursor:pointer;
+  transition:all .15s;width:calc(100% - 36px);
+}
+.add-q-btn:hover{border-color:var(--g);color:var(--g);background:rgba(29,185,84,.04);}
 </style>
 </head>
 <body>
@@ -1102,8 +1133,89 @@ function selectLevel(l){
 }
 
 function getQuestions(pi, si, ci){
+  // Check for session-level overrides first
+  const okey = `qoverride_${pi}_${si}_${ci}`;
+  if(SESSION.notes[okey]) return JSON.parse(SESSION.notes[okey]);
   try { return LQ[pi][si][ci][selectedLevel] || LQ[pi][si][ci][2]; }
   catch(e){ return []; }
+}
+
+function saveQuestionOverride(pi, si, ci, qs){
+  const okey = `qoverride_${pi}_${si}_${ci}`;
+  SESSION.notes[okey] = JSON.stringify(qs);
+  persistSession(pi);
+}
+
+function renderQuestions(wrap, key, pi, si, ci, gIdx){
+  wrap.innerHTML = '';
+  const parts = key.split('-');
+  const qs = getQuestions(pi, parseInt(parts[0]), parseInt(parts[1]));
+
+  qs.forEach((q, qi)=>{
+    const qkey = key + '-q' + qi;
+    const saved = SESSION.notes[qkey] || '';
+    const label = `${gIdx}.${qi+1}.`;
+    const item = document.createElement('div');
+    item.className = 'c-qitem';
+    item.innerHTML = `
+      <div class="c-qitem-q">
+        <span class="c-qitem-num">${label}</span>
+        <textarea class="c-qitem-q-input" rows="1"
+          oninput="autoResize(this);saveQText(${pi},${si},${ci},'${key}',${gIdx})"
+          placeholder="Escreva a pergunta...">${q}</textarea>
+        <span class="q-edit-hint">editar</span>
+      </div>
+      <button class="c-qitem-del" title="Remover pergunta" onclick="removeQuestion(${pi},${si},${ci},'${key}',${qi},${gIdx})">×</button>
+      <textarea class="c-qitem-a" placeholder="Resposta / evidência..." rows="2"
+        oninput="saveNote('${qkey}',this.value,${pi})">${saved}</textarea>`;
+    wrap.appendChild(item);
+    // auto-resize textarea on load
+    const ta = item.querySelector('.c-qitem-q-input');
+    if(ta) setTimeout(()=>autoResize(ta), 0);
+  });
+
+  // Add question button
+  const addBtn = document.createElement('button');
+  addBtn.className = 'add-q-btn';
+  addBtn.innerHTML = '+ adicionar pergunta';
+  addBtn.onclick = () => addQuestion(pi, si, ci, key, gIdx);
+  wrap.appendChild(addBtn);
+}
+
+function autoResize(el){
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
+function saveQText(pi, si, ci, key, gIdx){
+  const wrap = document.getElementById('cq-' + key);
+  if(!wrap) return;
+  const inputs = wrap.querySelectorAll('.c-qitem-q-input');
+  const qs = Array.from(inputs).map(i => i.value.trim()).filter(Boolean);
+  saveQuestionOverride(pi, si, ci, qs);
+}
+
+function removeQuestion(pi, si, ci, key, qi, gIdx){
+  const parts = key.split('-');
+  const qs = [...getQuestions(pi, parseInt(parts[0]), parseInt(parts[1]))];
+  qs.splice(qi, 1);
+  saveQuestionOverride(pi, parseInt(parts[0]), parseInt(parts[1]), qs);
+  const wrap = document.getElementById('cq-' + key);
+  if(wrap) renderQuestions(wrap, key, pi, parseInt(parts[0]), parseInt(parts[1]), gIdx);
+}
+
+function addQuestion(pi, si, ci, key, gIdx){
+  const parts = key.split('-');
+  const qs = [...getQuestions(pi, parseInt(parts[0]), parseInt(parts[1]))];
+  qs.push('');
+  saveQuestionOverride(pi, parseInt(parts[0]), parseInt(parts[1]), qs);
+  const wrap = document.getElementById('cq-' + key);
+  if(wrap){
+    renderQuestions(wrap, key, pi, parseInt(parts[0]), parseInt(parts[1]), gIdx);
+    // Focus the new input
+    const inputs = wrap.querySelectorAll('.c-qitem-q-input');
+    if(inputs.length) inputs[inputs.length-1].focus();
+  }
 }
 
 const PILLARS = [
@@ -1317,12 +1429,35 @@ function copyLink(){
 }
 
 async function launch(){
-  if(selectedRole<0) return;
+  if(selectedRole<0){ showToast("Selecione seu papel acima!"); return; }
   if(selectedLevel<0 && selectedRole<3){ showToast("Selecione o nível do candidato!"); return; }
 
-  const cand = document.getElementById('hCand').value.trim() || 'Candidato';
-  const role = document.getElementById('hRole').value.trim() || '—';
-  const name = document.getElementById('hName').value.trim() || 'Entrevistador';
+  const cand = document.getElementById('hCand').value.trim();
+  const role = document.getElementById('hRole').value.trim();
+  const name = document.getElementById('hName').value.trim();
+
+  // Validate all required fields
+  const missing = [];
+  if(!cand) missing.push('Nome do candidato');
+  if(!role) missing.push('Vaga');
+  if(!name) missing.push('Seu nome');
+
+  if(missing.length){
+    // Highlight empty fields
+    ['hCand','hRole','hName'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el && !el.value.trim()){
+        el.style.borderColor = 'var(--weak)';
+        el.style.boxShadow = '0 0 0 3px rgba(239,68,68,.1)';
+        el.addEventListener('input', function clear(){
+          el.style.borderColor = ''; el.style.boxShadow = '';
+          el.removeEventListener('input', clear);
+        });
+      }
+    });
+    showToast(`Preencha: ${missing.join(', ')}`);
+    return;
+  }
 
   // First time: create candidate ID and set hash
   if(!CAND_ID){
@@ -1439,20 +1574,7 @@ function buildContent(pi){
 
       // Build inline question+answer rows
       const qWrap = document.getElementById('cq-'+key);
-      if(qWrap){
-        const qs = getQuestions(pi,si,ci);
-        qs.forEach((q,qi)=>{
-          const qkey = key+'-q'+qi;
-          const saved = SESSION.notes[qkey]||'';
-          const label = `${gIdx}.${qi+1}.`;
-          const item = document.createElement('div');
-          item.className='c-qitem';
-          item.innerHTML=`<div class="c-qitem-q"><span class="c-qitem-num">${label}</span>${q}</div>
-            <textarea class="c-qitem-a" placeholder="Resposta / evidência..." rows="2"
-              oninput="saveNote('${qkey}',this.value,${pi})">${saved}</textarea>`;
-          qWrap.appendChild(item);
-        });
-      }
+      if(qWrap){ renderQuestions(qWrap, key, pi, si, ci, gIdx); }
     });
   });
 
