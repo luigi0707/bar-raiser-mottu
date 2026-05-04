@@ -1188,18 +1188,92 @@ const PILLARS = [
 ];
 
 /* ══ STATE ══ */
-// Shared via localStorage (simulates same-file shared state)
-const STORE_KEY = 'mottu_br_v1';
-let G = { candidate:'', role:'', sessions:{} };
-
-function loadState(){ try{ const d=localStorage.getItem(STORE_KEY); if(d) G=JSON.parse(d); }catch(e){} }
-function saveState(){ try{ localStorage.setItem(STORE_KEY,JSON.stringify(G)); }catch(e){} }
-
+let G = { candidate:'', role:'', sessions:{}, finalReport:null };
 let SESSION = { pillarIdx:0, name:'', ratings:{}, notes:{}, elimFlags:{}, verdict:null, secs:0, running:false, iv:null };
 let selectedRole = -1;
+let CAND_ID = null;
+let _pollTimer = null;
+
+// JSONBin.io — free shared JSON storage, no auth needed for public bins
+const JSONBIN_API = 'https://api.jsonbin.io/v3/b';
+const JSONBIN_KEY = '$2a$10$placeholder'; // will be set on first create
+
+function genId(){ return 'br_' + Math.random().toString(36).slice(2,9); }
+function getHashId(){ return location.hash.replace('#','') || null; }
+function setHashId(id){ history.replaceState(null,'', location.pathname + '#' + id); }
+
+// Each candidate gets a JSONBin identified by CAND_ID stored in localStorage
+// The bin ID is stored locally after creation
+function getBinId(){ return localStorage.getItem('bin_' + CAND_ID); }
+function setBinId(id){ localStorage.setItem('bin_' + CAND_ID, id); }
+
+async function loadState(){
+  if(!CAND_ID) return;
+  const binId = getBinId();
+  if(!binId) return;
+  try {
+    const r = await fetch(`${JSONBIN_API}/${binId}/latest`, {
+      headers: { 'X-Access-Key': '$2a$10$8Qn3z1kPmVwXyT5uLdNsOeR7jH2cF4bG6aE9iK0lM1nP3qS5vU7wY' }
+    });
+    if(r.ok){ const d = await r.json(); G = d.record || G; }
+  } catch(e){}
+}
+
+async function saveState(){
+  if(!CAND_ID) return;
+  let binId = getBinId();
+  try {
+    if(!binId){
+      // Create new bin
+      const r = await fetch(JSONBIN_API, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Access-Key': '$2a$10$8Qn3z1kPmVwXyT5uLdNsOeR7jH2cF4bG6aE9iK0lM1nP3qS5vU7wY',
+          'X-Bin-Name': CAND_ID,
+          'X-Bin-Private': 'false'
+        },
+        body: JSON.stringify(G)
+      });
+      if(r.ok){ const d = await r.json(); setBinId(d.metadata.id); }
+    } else {
+      // Update existing bin
+      await fetch(`${JSONBIN_API}/${binId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Access-Key': '$2a$10$8Qn3z1kPmVwXyT5uLdNsOeR7jH2cF4bG6aE9iK0lM1nP3qS5vU7wY'
+        },
+        body: JSON.stringify(G)
+      });
+    }
+  } catch(e){}
+}
+
+async function persistSession(pi){
+  await loadState();
+  G.sessions[pi] = { ...SESSION, running:false, iv:null };
+  await saveState();
+}
 
 /* ══ HOME ══ */
 document.getElementById('hDate').valueAsDate = new Date();
+
+// On load: if hash exists, pre-fill candidate info
+(async function init(){
+  const id = getHashId();
+  if(id){
+    CAND_ID = id;
+    // Try to find bin ID from other bar raisers via URL param
+    const params = new URLSearchParams(location.search);
+    const binParam = params.get('bin');
+    if(binParam && !getBinId()) setBinId(binParam);
+    await loadState();
+    if(G.candidate){ document.getElementById('hCand').value = G.candidate; document.getElementById('hCand').disabled = true; }
+    if(G.role){ document.getElementById('hRole').value = G.role; document.getElementById('hRole').disabled = true; }
+    showLinkBox(id);
+  }
+})();
 
 function selectRole(r){
   selectedRole = r;
@@ -1215,20 +1289,54 @@ function selectRole(r){
   btn.textContent=labels[r];
 }
 
-function launch(){
+function showLinkBox(id){
+  let box = document.getElementById('linkBox');
+  if(!box){
+    box = document.createElement('div');
+    box.id = 'linkBox';
+    box.style.cssText='margin-top:20px;padding:14px 16px;background:var(--s1);border:1px solid var(--b2);border-radius:12px;';
+    document.querySelector('.home-inner').appendChild(box);
+  }
+  // Include bin ID in URL so other bar raisers find the same data
+  const binId = getBinId();
+  const base = location.href.split('#')[0].split('?')[0];
+  const url = binId
+    ? `${base}?bin=${binId}#${id}`
+    : `${base}#${id}`;
+  box.innerHTML = `
+    <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:8px;">Link compartilhável — envie para os bar raisers</div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="flex:1;min-width:0;font-size:12px;color:var(--g);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="linkBoxUrl">${url}</div>
+      <button onclick="copyLink()" style="background:rgba(29,185,84,.1);border:1px solid rgba(29,185,84,.25);border-radius:8px;padding:7px 14px;color:var(--g);font-family:'Syne',sans-serif;font-weight:700;font-size:11px;cursor:pointer;flex-shrink:0;">Copiar</button>
+    </div>`;
+}
+
+function copyLink(){
+  const url = document.getElementById('linkBoxUrl')?.textContent;
+  if(url) navigator.clipboard.writeText(url).then(()=>showToast('Link copiado! Envie para os bar raisers.'));
+}
+
+async function launch(){
   if(selectedRole<0) return;
   if(selectedLevel<0 && selectedRole<3){ showToast("Selecione o nível do candidato!"); return; }
-  loadState();
-  const cand=document.getElementById('hCand').value.trim()||'Candidato';
-  const role=document.getElementById('hRole').value.trim()||'—';
-  const name=document.getElementById('hName').value.trim()||'Entrevistador';
 
-  // Update shared candidate info
-  if(cand!=='Candidato'){ G.candidate=cand; G.role=role; saveState(); }
+  const cand = document.getElementById('hCand').value.trim() || 'Candidato';
+  const role = document.getElementById('hRole').value.trim() || '—';
+  const name = document.getElementById('hName').value.trim() || 'Entrevistador';
 
-  if(selectedRole===3){ openConsolidation(); return; }
+  // First time: create candidate ID and set hash
+  if(!CAND_ID){
+    CAND_ID = genId();
+    setHashId(CAND_ID);
+  }
 
-  // Load existing session for this pillar if any
+  await loadState();
+  if(cand !== 'Candidato'){ G.candidate = cand; G.role = role; }
+  await saveState();
+  showLinkBox(CAND_ID); // refresh after save so bin ID is in the URL
+
+  if(selectedRole === 3){ openConsolidation(); return; }
+
   const existing = G.sessions[selectedRole];
   SESSION = existing ? {...existing, running:false, iv:null} : {
     pillarIdx:selectedRole, name, level:selectedLevel, ratings:{}, notes:{}, elimFlags:{}, verdict:null, secs:0, running:false, iv:null
@@ -1236,8 +1344,8 @@ function launch(){
   SESSION.name = name;
   SESSION.level = selectedLevel;
 
-  document.getElementById('home').style.display='none';
-  document.getElementById('interview').style.display='block';
+  document.getElementById('home').style.display = 'none';
+  document.getElementById('interview').style.display = 'block';
   buildInterview(selectedRole);
 }
 
@@ -1411,7 +1519,7 @@ function rate(key,r,btn,pi){
   const prev=SESSION.ratings[key];
   if(prev===r){ delete SESSION.ratings[key]; card.className='ccard'+(SESSION.elimFlags[key]?' eliminated':''); btn.closest('.rating-row').querySelectorAll('.rb').forEach(b=>b.classList.remove('on')); }
   else { SESSION.ratings[key]=r; card.className=`ccard r-${r}`+(SESSION.elimFlags[key]?' eliminated':''); btn.closest('.rating-row').querySelectorAll('.rb').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); }
-  persistSession(pi);
+  persistSession(pi); // fire-and-forget async
   updateInterviewScores(pi);
 }
 
@@ -1422,7 +1530,7 @@ function toggleElim(key,btn,pi){
   const card=document.getElementById(`card-${key}`);
   const r=SESSION.ratings[key];
   card.className=`ccard${r?' r-'+r:''}${SESSION.elimFlags[key]?' eliminated':''}`;
-  persistSession(pi);
+  persistSession(pi); // fire-and-forget async
   updateInterviewScores(pi);
 }
 
@@ -1462,17 +1570,19 @@ function updateInterviewScores(pi){
   el('phfill-'+pi).style.width=pct+'%'; el('phtxt-'+pi).textContent=`${rated} / ${tot}`;
 }
 
-function persistSession(pi){
-  loadState();
+async function persistSession(pi){
+  await loadState();
   G.sessions[pi]={ ...SESSION, running:false, iv:null };
-  saveState();
+  await saveState();
 }
 
-function submitSession(pi){
+async function submitSession(pi){
   if(!SESSION.verdict){ showToast('Defina um veredicto antes de salvar!'); return; }
-  persistSession(pi);
-  showToast('✓ Feedback salvo! Outros entrevistadores podem ver no painel de consolidação.');
-  setTimeout(()=>goHome(),1200);
+  const btn = document.querySelector('.submit-btn');
+  if(btn){ btn.textContent='Salvando...'; btn.disabled=true; }
+  await persistSession(pi);
+  showToast('✓ Feedback salvo! Os outros bar raisers já podem ver no painel.');
+  setTimeout(()=>goHome(), 1200);
 }
 
 /* ══ TIMER ══ */
@@ -1495,25 +1605,28 @@ function stopTimer(){
 function resetTimer(){ stopTimer(); SESSION.secs=0; el('tClock').textContent='00:00'; el('tClock').className='tp-t'; }
 
 /* ══ CONSOLIDATION ══ */
-function openConsolidation(){
-  loadState();
+async function openConsolidation(){
+  await loadState();
   document.getElementById('home').style.display='none';
   document.getElementById('consolidation').style.display='block';
   renderDash();
+  if(_pollTimer) clearInterval(_pollTimer);
+  _pollTimer = setInterval(async()=>{
+    const prev = Object.keys(G.sessions).length;
+    await loadState();
+    if(Object.keys(G.sessions).length !== prev) renderDash();
+    if(Object.keys(G.sessions).length >= 3){ clearInterval(_pollTimer); _pollTimer=null; }
+  }, 7000);
 }
 
-function renderDash(){
+async function renderDash(){
   const cand=G.candidate||document.getElementById('hCand').value||'Candidato';
   const role=G.role||document.getElementById('hRole').value||'—';
   el('dCandInfo').innerHTML=`<strong>${cand}</strong> · ${role}`;
-
   const body=el('dashBody'); body.innerHTML='';
 
-  // Collect all eliminations
   const allElims=[];
-  let totalStrong=0,totalRated=0,totalCriteria=0;
-  let verdicts=[]; let submittedCount=0;
-
+  let totalStrong=0,totalRated=0,totalCriteria=0,verdicts=[],submittedCount=0;
   PILLARS.forEach((P,pi)=>{
     const sess=G.sessions[pi];
     let ps=0,pR=0,pT=P.subs.reduce((a,s)=>a+s.cs.length,0);
@@ -1522,97 +1635,143 @@ function renderDash(){
       if(sess.verdict) verdicts.push(sess.verdict);
       P.subs.forEach((sp,si)=>sp.cs.forEach((c,ci)=>{
         const key=`${si}-${ci}`;
-        if(sess.ratings[key] && sess.ratings[key]!=='na'){ pR++; if(sess.ratings[key]==='strong') ps++; }
+        if(sess.ratings[key]&&sess.ratings[key]!=='na'){pR++;if(sess.ratings[key]==='strong')ps++;}
         if(sess.elimFlags&&sess.elimFlags[key]) allElims.push({pillar:P.name,text:c.t,interviewer:sess.name||'—'});
       }));
     }
-    totalStrong+=ps; totalRated+=pR; totalCriteria+=pT;
+    totalStrong+=ps;totalRated+=pR;totalCriteria+=pT;
   });
 
-  // Auto-verdict logic
   const hasElim=allElims.length>0;
   const rejectCount=verdicts.filter(v=>v==='reject').length;
   const approveCount=verdicts.filter(v=>v==='approve').length;
-  const holdCount=verdicts.filter(v=>v==='hold').length;
   let autoVerdict='pending';
   if(submittedCount===3){
     if(hasElim||rejectCount>=2) autoVerdict='reject';
     else if(approveCount>=2) autoVerdict='approve';
     else autoVerdict='hold';
   }
+  const pct=totalCriteria>0?Math.round(totalRated/totalCriteria*100):0;
+
+  // LIVE STATUS BANNER (while waiting)
+  if(submittedCount<3){
+    const banner=document.createElement('div');
+    banner.style.cssText='background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;';
+    const dots=PILLARS.map((P,pi)=>{
+      const done=!!G.sessions[pi];
+      const col=['var(--pillar-0)','var(--pillar-1)','var(--pillar-2)'][pi];
+      return `<div style="display:flex;align-items:center;gap:8px;"><div style="width:8px;height:8px;border-radius:50%;background:${done?col:'var(--b3)'};"></div><span style="font-size:12px;color:${done?'var(--t1)':'var(--t3)'};">${P.icon} ${P.name}${done?' ✓':''}</span></div>`;
+    }).join('');
+    banner.innerHTML=`<div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--t3);margin-bottom:8px;">Aguardando feedbacks · atualiza automaticamente</div><div style="display:flex;gap:20px;">${dots}</div></div><div style="font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:500;color:var(--t2);">${submittedCount}<span style="font-size:14px;">/3</span></div>`;
+    body.appendChild(banner);
+  }
 
   // STATS
-  const pct=totalCriteria>0?Math.round(totalRated/totalCriteria*100):0;
-  const stats=document.createElement('div'); stats.className='dash-stats';
+  const stats=document.createElement('div');stats.className='dash-stats';
   stats.innerHTML=`
-    <div class="dstat"><div class="dstat-label">Feedbacks recebidos</div>
-      <div class="dstat-val ${submittedCount===3?'green':submittedCount>0?'orange':''}">${submittedCount}/3</div>
-      <div class="dstat-sub">bar raisers</div></div>
-    <div class="dstat"><div class="dstat-label">Critérios fortes</div>
-      <div class="dstat-val ${totalStrong>=14?'green':totalStrong>=8?'orange':'red'}">${totalStrong}</div>
-      <div class="dstat-sub">de ${totalCriteria} avaliados</div></div>
-    <div class="dstat"><div class="dstat-label">Critérios avaliados</div>
-      <div class="dstat-val">${pct}%</div>
-      <div class="dstat-sub">${totalRated}/${totalCriteria} total</div></div>
-    <div class="dstat"><div class="dstat-label">Eliminatórios</div>
-      <div class="dstat-val ${allElims.length>0?'red':''}">${allElims.length}</div>
-      <div class="dstat-sub">critérios marcados</div></div>`;
+    <div class="dstat"><div class="dstat-label">Feedbacks recebidos</div><div class="dstat-val ${submittedCount===3?'green':submittedCount>0?'orange':''}">${submittedCount}/3</div><div class="dstat-sub">bar raisers</div></div>
+    <div class="dstat"><div class="dstat-label">Critérios fortes</div><div class="dstat-val ${totalStrong>=14?'green':totalStrong>=8?'orange':'red'}">${totalStrong}</div><div class="dstat-sub">de ${totalCriteria} total</div></div>
+    <div class="dstat"><div class="dstat-label">Avaliados</div><div class="dstat-val">${pct}%</div><div class="dstat-sub">${totalRated}/${totalCriteria} critérios</div></div>
+    <div class="dstat"><div class="dstat-label">Eliminatórios</div><div class="dstat-val ${allElims.length>0?'red':''}">${allElims.length}</div><div class="dstat-sub">critérios marcados</div></div>`;
   body.appendChild(stats);
 
   // VERDICT
-  const vi=document.createElement('div'); vi.className='verdict-indicator';
+  const vi=document.createElement('div');vi.className='verdict-indicator';
   const vMap={approve:'✅ Aprovado — contratar',hold:'⏸ Em análise — debrief necessário',reject:'❌ Reprovado — não contratar',pending:'⏳ Aguardando todos os feedbacks'};
   const vClass={approve:'vi-approve',hold:'vi-hold',reject:'vi-reject',pending:'vi-pending'};
-  const vDiv=document.createElement('div'); vDiv.className='vi-val '+vClass[autoVerdict]; vDiv.textContent=vMap[autoVerdict];
-  vi.innerHTML=`<div><div class="dstat-label" style="margin-bottom:4px">Veredicto consolidado</div>
-    <div style="font-size:12px;color:var(--t3)">Baseado em ${verdicts.length} votos · ${hasElim?'critério eliminatório marcado':'sem eliminatórios'}</div></div>`;
-  vi.appendChild(vDiv);
-  body.appendChild(vi);
+  const vDiv=document.createElement('div');vDiv.className=`vi-val ${vClass[autoVerdict]}`;vDiv.textContent=vMap[autoVerdict];
+  vi.innerHTML=`<div><div class="dstat-label" style="margin-bottom:4px">Veredicto consolidado</div><div style="font-size:12px;color:var(--t3)">Baseado em ${verdicts.length} votos · ${hasElim?'critério eliminatório marcado':'sem eliminatórios'}</div></div>`;
+  vi.appendChild(vDiv);body.appendChild(vi);
 
   // ELIM BANNER
   if(allElims.length>0){
-    const banner=document.createElement('div'); banner.className='elim-banner on';
-    banner.innerHTML=`<div class="eb-title">⚠ Critérios eliminatórios identificados</div>
-      <ul class="eb-list">${allElims.map(e=>`<li><strong>${e.pillar}</strong> · ${e.text} <em style="color:var(--t3)">(${e.interviewer})</em></li>`).join('')}</ul>`;
+    const banner=document.createElement('div');banner.className='elim-banner on';
+    banner.innerHTML=`<div class="eb-title">⚠ Critérios eliminatórios identificados</div><ul class="eb-list">${allElims.map(e=>`<li><strong>${e.pillar}</strong> · ${e.text} <em style="color:var(--t3)">(${e.interviewer})</em></li>`).join('')}</ul>`;
     body.appendChild(banner);
   }
 
   // PILLAR COLUMNS
-  const cols=document.createElement('div'); cols.className='pillar-cols';
+  const cols=document.createElement('div');cols.className='pillar-cols';
   PILLARS.forEach((P,pi)=>{
-    const sess=G.sessions[pi];
-    const col=document.createElement('div'); col.className='pc';
-    const total=P.subs.reduce((a,s)=>a+s.cs.length,0);
-    let pR=0;
-    if(sess) P.subs.forEach((sp,si)=>sp.cs.forEach((_,ci)=>{ if(sess.ratings[`${si}-${ci}`]) pR++; }));
+    const sess=G.sessions[pi];const col=document.createElement('div');col.className='pc';
+    const total=P.subs.reduce((a,s)=>a+s.cs.length,0);let pR=0;
+    if(sess) P.subs.forEach((sp,si)=>sp.cs.forEach((_,ci)=>{if(sess.ratings[`${si}-${ci}`])pR++;}));
     const pct2=total>0?Math.round(pR/total*100):0;
     const vPill=sess?.verdict?`<div class="pc-verdict-pill pcvp-${sess.verdict}">${{approve:'✅ Aprovar',hold:'⏸ Em análise',reject:'❌ Reprovar'}[sess.verdict]}</div>`:`<div class="pc-verdict-pill pcvp-pending">Aguardando</div>`;
-
-    col.innerHTML=`<div class="pc-header">
-      <div>
-        <div class="pch-name">${P.icon} ${P.name}</div>
-        <div class="pch-bar-wrap"><div class="pch-bar"><div class="pch-fill pch-fill-${pi}" style="width:${pct2}%"></div></div></div>
-      </div>
-      <div style="text-align:right">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--t3)">${pR}/${total}</div>
-      </div></div>
-      <div class="pc-body">
-        <div class="pc-interviewer ${sess?'submitted':''}"><div class="dot"></div>${sess?sess.name||'—':'Não submetido'}</div>
-        ${vPill}
-        ${sess?renderCriteriaSummary(P,pi,sess):`<div class="pc-empty">Aguardando feedback do bar raiser</div>`}
-        ${sess?.notes?.['__general']?`<div style="margin-top:12px;padding:10px;background:var(--s2);border-radius:8px;font-size:11px;color:var(--t2);font-style:italic;line-height:1.6">"${sess.notes['__general']}"</div>`:''}
-      </div>`;
+    col.innerHTML=`<div class="pc-header"><div><div class="pch-name">${P.icon} ${P.name}</div><div class="pch-bar-wrap"><div class="pch-bar"><div class="pch-fill pch-fill-${pi}" style="width:${pct2}%"></div></div></div></div><div style="text-align:right"><div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--t3)">${pR}/${total}</div></div></div><div class="pc-body"><div class="pc-interviewer ${sess?'submitted':''}"><div class="dot"></div>${sess?sess.name||'—':'Não submetido'}</div>${vPill}${sess?renderCriteriaSummary(P,pi,sess):`<div class="pc-empty">Aguardando feedback do bar raiser</div>`}${sess?.notes?.['__general']?`<div style="margin-top:12px;padding:10px;background:var(--s2);border-radius:8px;font-size:11px;color:var(--t2);font-style:italic;line-height:1.6">"${sess.notes['__general']}"</div>`:''}</div>`;
     cols.appendChild(col);
   });
   body.appendChild(cols);
 
+  // FINAL AI REPORT
+  if(submittedCount===3){
+    const sec=document.createElement('div');sec.id='finalReportSection';
+    if(G.finalReport){ renderFinalReport(sec,G.finalReport); }
+    else {
+      sec.innerHTML=`<div style="background:var(--s1);border:1px solid rgba(29,185,84,.25);border-radius:14px;padding:28px;text-align:center;"><div style="font-size:22px;margin-bottom:10px;">✨</div><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#fff;margin-bottom:6px;">Parecer final disponível</div><div style="font-size:13px;color:var(--t3);margin-bottom:20px;">Todos os 3 feedbacks foram recebidos. Gere o parecer consolidado com IA.</div><button onclick="generateFinalReport()" id="genReportBtn" style="background:var(--g);color:#fff;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;border:none;border-radius:10px;padding:13px 32px;cursor:pointer;letter-spacing:.04em;">✨ Gerar parecer final</button></div>`;
+    }
+    body.appendChild(sec);
+  }
+
   // EXPORT
-  const expRow=document.createElement('div'); expRow.className='export-row';
+  const expRow=document.createElement('div');expRow.className='export-row';
   expRow.innerHTML=`<button class="exp-btn" onclick="exportAll()">↓ Exportar consolidação completa</button>`;
   body.appendChild(expRow);
+}
 
-  // Auto-refresh every 8s if not complete
-  if(submittedCount<3) setTimeout(()=>{ loadState(); renderDash(); },8000);
+async function generateFinalReport(){
+  const btn=document.getElementById('genReportBtn');
+  if(btn){btn.textContent='Gerando...';btn.disabled=true;}
+  let context=`Candidato: ${G.candidate}\nVaga: ${G.role}\n\n`;
+  PILLARS.forEach((P,pi)=>{
+    const sess=G.sessions[pi];if(!sess)return;
+    context+=`\n══ PILAR: ${P.name} (entrevistador: ${sess.name||'—'}) ══\nVeredicto: ${sess.verdict}\n`;
+    if(sess.notes?.['__general']) context+=`Observações: ${sess.notes['__general']}\n`;
+    P.subs.forEach((sp,si)=>{
+      context+=`\n  Sub-pilar: ${sp.n}\n`;
+      sp.cs.forEach((c,ci)=>{
+        const key=`${si}-${ci}`;const r=sess.ratings?.[key]||'não avaliado';const elim=sess.elimFlags?.[key]?'⚠ ELIMINATÓRIO':'';
+        context+=`  - [${r}] ${c.t} ${elim}\n`;
+        const ql=sess.level>=0?(LQ?.[pi]?.[si]?.[ci]?.[sess.level]||LQ?.[pi]?.[si]?.[ci]?.[2]||[]):[];
+        ql.forEach((q,qi)=>{const a=sess.notes?.[key+'-q'+qi];if(a) context+=`      Q: ${q}\n      R: ${a}\n`;});
+      });
+    });
+  });
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:`Você é o coordenador do processo Bar Raiser da Mottu. Com base nos feedbacks dos 3 entrevistadores, produza um parecer final consolidado. Responda APENAS em JSON válido, sem markdown.`,messages:[{role:'user',content:`${context}\n\nRetorne JSON:\n{"recomendacao":"contratar"|"nao_contratar"|"segunda_rodada","frase_executiva":"1 frase direta para o hiring manager","score_geral":0-10,"dimensoes":[{"nome":"string","score":0-10,"sintese":"1 frase"}],"pontos_fortes":["evidência 1","evidência 2","evidência 3"],"riscos":["risco 1","risco 2"],"proximos_passos":"o que fazer agora"}`}]})});
+    const data=await res.json();
+    const text=data.content.map(i=>i.text||'').join('');
+    const report=JSON.parse(text.replace(/```json|```/g,'').trim());
+    G.finalReport=report;await saveState();
+    const sec=document.getElementById('finalReportSection');
+    if(sec) renderFinalReport(sec,report);
+  }catch(e){
+    showToast('Erro ao gerar parecer. Tente novamente.');
+    if(btn){btn.textContent='✨ Gerar parecer final';btn.disabled=false;}
+  }
+}
+
+function renderFinalReport(container,r){
+  const recMap={contratar:'✅ Contratar',nao_contratar:'❌ Não contratar',segunda_rodada:'⟳ Segunda rodada'};
+  const recColor={contratar:'var(--g)',nao_contratar:'var(--weak)',segunda_rodada:'var(--ok)'};
+  const recBg={contratar:'rgba(29,185,84,.08)',nao_contratar:'rgba(239,68,68,.07)',segunda_rodada:'rgba(245,158,11,.07)'};
+  const recBorder={contratar:'rgba(29,185,84,.25)',nao_contratar:'rgba(239,68,68,.2)',segunda_rodada:'rgba(245,158,11,.2)'};
+  const rc=r.recomendacao;
+  const scoreBar=s=>{const pct=Math.round(s/10*100);const col=s>=7?'var(--g)':s>=5?'var(--ok)':'var(--weak)';return `<div style="height:3px;background:var(--b2);border-radius:2px;overflow:hidden;margin-top:5px;"><div style="height:100%;width:${pct}%;background:${col};border-radius:2px;"></div></div>`;};
+  const dims=(r.dimensoes||[]).map(d=>`<div style="padding:10px 0;border-bottom:1px solid var(--b1);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;"><span style="font-size:12px;color:var(--t2);">${d.nome}</span><span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;color:${d.score>=7?'var(--g)':d.score>=5?'var(--ok)':'var(--weak)'};">${d.score}/10</span></div>${scoreBar(d.score)}<div style="font-size:11px;color:var(--t3);margin-top:5px;font-style:italic;">${d.sintese}</div></div>`).join('');
+  const fortes=(r.pontos_fortes||[]).map(p=>`<div style="display:flex;gap:8px;padding:6px 0;font-size:12px;color:var(--t2);border-bottom:1px solid var(--b1);"><span style="color:var(--g);flex-shrink:0;font-weight:700;">+</span>${p}</div>`).join('');
+  const riscos=(r.riscos||[]).map(p=>`<div style="display:flex;gap:8px;padding:6px 0;font-size:12px;color:var(--t2);border-bottom:1px solid var(--b1);"><span style="color:var(--weak);flex-shrink:0;font-weight:700;">!</span>${p}</div>`).join('');
+  container.innerHTML=`<div style="background:var(--s1);border:1px solid var(--b1);border-radius:16px;overflow:hidden;margin-bottom:16px;">
+    <div style="padding:20px 24px;border-bottom:1px solid var(--b1);display:flex;align-items:flex-start;justify-content:space-between;gap:20px;">
+      <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--g);margin-bottom:8px;">✨ Parecer final · IA</div><div style="font-size:14px;color:var(--t1);line-height:1.65;max-width:560px;">${r.frase_executiva}</div></div>
+      <div style="text-align:center;flex-shrink:0;"><div style="font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:500;color:${recColor[rc]||'var(--t1)'};">${r.score_geral}<span style="font-size:16px;">/10</span></div><div style="font-size:11px;color:var(--t3);margin-top:2px;">score geral</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;">
+      <div style="padding:18px 20px;border-right:1px solid var(--b1);"><div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:10px;">Dimensões</div>${dims}</div>
+      <div style="padding:18px 20px;border-right:1px solid var(--b1);"><div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:10px;">Pontos fortes</div>${fortes}<div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin:14px 0 10px;">Riscos</div>${riscos}</div>
+      <div style="padding:18px 20px;"><div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:10px;">Recomendação</div><div style="padding:12px 14px;background:${recBg[rc]||'var(--s2)'};border:1px solid ${recBorder[rc]||'var(--b2)'};border-radius:10px;font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:${recColor[rc]||'var(--t1)'};margin-bottom:16px;">${recMap[rc]||rc}</div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:8px;">Próximos passos</div><div style="font-size:12px;color:var(--t2);line-height:1.65;">${r.proximos_passos}</div></div>
+    </div>
+  </div>`;
 }
 
 function renderCriteriaSummary(P,pi,sess){
@@ -1642,8 +1801,8 @@ function renderCriteriaSummary(P,pi,sess){
   return html;
 }
 
-function exportAll(){
-  loadState();
+async function exportAll(){
+  await loadState();
   const cand=G.candidate||'Candidato'; const role=G.role||'—';
   let txt=`BAR RAISER · MOTTU — CONSOLIDAÇÃO\n${'='.repeat(50)}\nCandidato: ${cand}\nVaga:      ${role}\nData:      ${new Date().toLocaleDateString('pt-BR')}\n\n`;
   const rmap={strong:'[FORTE]',ok:'[OK   ]',weak:'[FRACO]',na:'[N/A  ]'};
@@ -1893,7 +2052,7 @@ Regras:
       if(gn){ gn.value = result.generalNotes; SESSION.notes['__general'] = result.generalNotes; }
     }
 
-    persistSession(pi);
+    await persistSession(pi);
     updateInterviewScores(pi);
     closeGranola();
     showToast(`✨ IA preencheu ${Object.keys(result.ratings||{}).length} critérios automaticamente!`);
