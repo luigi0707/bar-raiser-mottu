@@ -1,0 +1,1920 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bar Raiser · Mottu</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Epilogue:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --g: #1DB954; --g2: #158a3e; --glow: rgba(29,185,84,0.12);
+  --ok: #F59E0B; --weak: #EF4444; --elim: #FF6B35;
+  --bg: #0b0b0b; --s1: #131313; --s2: #191919; --s3: #202020;
+  --b1: #252525; --b2: #2e2e2e; --b3: #3a3a3a;
+  --t1: #f0f0f0; --t2: #999; --t3: #555;
+  --pillar-0: #1DB954; --pillar-1: #3B82F6; --pillar-2: #A855F7;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Epilogue',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--b3);border-radius:99px}
+
+/* ══ HOME ══ */
+#home {
+  min-height:100vh;display:grid;place-items:center;padding:40px 20px;
+  background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(29,185,84,0.06) 0%, transparent 70%);
+}
+.home-inner{width:100%;max-width:760px}
+.home-brand{display:flex;align-items:center;gap:14px;margin-bottom:56px}
+.hb-box{
+  width:48px;height:48px;background:var(--g);border-radius:12px;
+  display:grid;place-items:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:#fff;
+}
+.hb-name{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:#fff}
+.hb-tag{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--g);letter-spacing:.14em;text-transform:uppercase}
+
+.home-hero{margin-bottom:48px}
+.home-hero h1{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:36px;
+  color:#fff;line-height:1.15;margin-bottom:12px;
+}
+.home-hero h1 em{color:var(--g);font-style:normal}
+.home-hero p{color:var(--t2);font-size:15px;line-height:1.75;max-width:520px}
+
+.home-inputs{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:32px;
+}
+.hi{display:flex;flex-direction:column;gap:7px}
+.hi label{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--t3);
+}
+.hi input{
+  background:var(--s1);border:1px solid var(--b2);border-radius:10px;
+  padding:12px 15px;color:var(--t1);font-family:'Epilogue',sans-serif;
+  font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s;
+}
+.hi input::placeholder{color:var(--t3)}
+.hi input:focus{border-color:var(--g);box-shadow:0 0 0 3px var(--glow)}
+
+.level-selector{margin-bottom:28px}
+.level-selector>label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:10px}
+.level-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.lc{background:var(--s1);border:1.5px solid var(--b2);border-radius:10px;padding:12px 8px;cursor:pointer;transition:all .2s;user-select:none;text-align:center}
+.lc:hover{border-color:var(--b3);background:var(--s2)}
+.lc.sel{border-color:var(--g);background:rgba(29,185,84,.08)}
+.lc-icon{font-size:18px;margin-bottom:6px}
+.lc-name{font-family:'Syne',sans-serif;font-weight:700;font-size:11px;color:var(--t1)}
+.lc-desc{font-size:10px;color:var(--t3);margin-top:3px;line-height:1.4}
+.lc.sel .lc-name{color:var(--g)}
+.role-cards{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:36px;
+}
+.rc{
+  background:var(--s1);border:1.5px solid var(--b2);border-radius:14px;
+  padding:20px 16px;cursor:pointer;transition:all .2s;user-select:none;
+  display:flex;flex-direction:column;gap:10px;
+}
+.rc:hover{border-color:var(--b3);background:var(--s2)}
+.rc.sel-0{border-color:var(--pillar-0);background:rgba(29,185,84,.06)}
+.rc.sel-1{border-color:var(--pillar-1);background:rgba(59,130,246,.06)}
+.rc.sel-2{border-color:var(--pillar-2);background:rgba(168,85,247,.06)}
+.rc.sel-3{border-color:var(--g);background:rgba(29,185,84,.04)}
+.rc-icon{font-size:22px}
+.rc-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--t1)}
+.rc-desc{font-size:11px;color:var(--t3);line-height:1.5}
+.rc-badge{
+  font-family:'JetBrains Mono',monospace;font-size:9px;
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 8px;border-radius:99px;width:fit-content;
+  background:var(--s3);color:var(--t3);
+}
+.rc.sel-0 .rc-badge{background:rgba(29,185,84,.15);color:var(--pillar-0)}
+.rc.sel-1 .rc-badge{background:rgba(59,130,246,.15);color:var(--pillar-1)}
+.rc.sel-2 .rc-badge{background:rgba(168,85,247,.15);color:var(--pillar-2)}
+.rc.sel-3 .rc-badge{background:rgba(29,185,84,.1);color:var(--g)}
+
+.go-btn{
+  width:100%;padding:16px;background:var(--g);color:#fff;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:15px;
+  border:none;border-radius:12px;cursor:pointer;letter-spacing:.04em;
+  transition:background .2s,transform .15s;
+}
+.go-btn:hover{background:var(--g2);transform:translateY(-1px)}
+.go-btn:disabled{background:var(--b2);color:var(--t3);cursor:not-allowed;transform:none}
+
+/* ══ INTERVIEW SCREEN ══ */
+#interview{display:none}
+
+.topbar{
+  position:sticky;top:0;z-index:200;height:58px;
+  background:rgba(11,11,11,.94);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--b1);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;gap:16px;
+}
+.tb-left{display:flex;align-items:center;gap:14px}
+.tb-brand{font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:#fff}
+.tb-divider{width:1px;height:20px;background:var(--b2)}
+.tb-who{font-size:13px;color:var(--t2)}
+.tb-who strong{color:var(--t1);font-weight:500}
+.tb-pillar-badge{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:4px 10px;border-radius:99px;
+}
+.pb-0{background:rgba(29,185,84,.12);color:var(--pillar-0);border:1px solid rgba(29,185,84,.2)}
+.pb-1{background:rgba(59,130,246,.12);color:var(--pillar-1);border:1px solid rgba(59,130,246,.2)}
+.pb-2{background:rgba(168,85,247,.12);color:var(--pillar-2);border:1px solid rgba(168,85,247,.2)}
+
+.tb-right{display:flex;align-items:center;gap:10px}
+.timer-pill{
+  display:flex;align-items:center;gap:8px;
+  background:var(--s2);border:1px solid var(--b2);
+  border-radius:99px;padding:5px 14px;
+}
+.tp-t{
+  font-family:'JetBrains Mono',monospace;font-size:16px;
+  font-weight:500;color:#fff;min-width:44px;
+  transition:color .3s;
+}
+.tp-t.warn{color:var(--ok)} .tp-t.over{color:var(--weak)}
+.tp-btn{
+  width:24px;height:24px;border-radius:50%;border:1px solid var(--b3);
+  background:var(--s3);color:var(--t2);cursor:pointer;font-size:10px;
+  display:grid;place-items:center;transition:all .15s;
+}
+.tp-btn:hover{border-color:var(--g);color:var(--g)}
+.tp-btn.on{border-color:var(--ok);color:var(--ok)}
+
+.score-pill{
+  background:var(--s2);border:1px solid var(--b2);
+  border-radius:99px;padding:5px 16px;
+  display:flex;align-items:center;gap:8px;
+}
+.sp-n{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:500;color:#fff;transition:color .3s}
+.sp-l{font-size:11px;color:var(--t3)}
+.sp-pct{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t3);padding-left:8px;border-left:1px solid var(--b2)}
+
+.back-btn{
+  padding:6px 14px;background:transparent;border:1px solid var(--b2);
+  border-radius:8px;color:var(--t2);font-family:'Epilogue',sans-serif;
+  font-size:12px;cursor:pointer;transition:all .15s;
+}
+.back-btn:hover{border-color:var(--b3);color:var(--t1)}
+
+/* LAYOUT */
+.shell{display:grid;grid-template-columns:220px 1fr 280px;height:calc(100vh - 58px)}
+
+/* LEFT NAV */
+.leftnav{
+  background:var(--s1);border-right:1px solid var(--b1);
+  padding:20px 0;overflow-y:auto;
+}
+.ln-section{margin-bottom:6px}
+.ln-pillar-hdr{
+  padding:10px 18px 6px;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:11px;
+  color:var(--t3);letter-spacing:.08em;text-transform:uppercase;
+}
+.ln-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 18px;cursor:pointer;font-size:13px;color:var(--t2);
+  transition:all .15s;border-left:2px solid transparent;
+}
+.ln-item:hover{color:var(--t1);background:var(--s2)}
+.ln-item.active-0{color:var(--pillar-0);border-left-color:var(--pillar-0);background:rgba(29,185,84,.06)}
+.ln-item.active-1{color:var(--pillar-1);border-left-color:var(--pillar-1);background:rgba(59,130,246,.06)}
+.ln-item.active-2{color:var(--pillar-2);border-left-color:var(--pillar-2);background:rgba(168,85,247,.06)}
+.ln-badge{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  background:var(--s3);border-radius:99px;padding:2px 7px;color:var(--t3);
+}
+.ln-elim-count{
+  font-size:10px;color:var(--elim);
+  font-family:'JetBrains Mono',monospace;display:none;
+}
+.ln-elim-count.on{display:block}
+
+/* SCROLL CONTENT */
+.scroll-col{overflow-y:auto;height:calc(100vh - 58px);padding:28px 28px 80px}
+
+/* PILLAR HEADER */
+.p-hdr{
+  display:flex;align-items:flex-start;gap:16px;
+  padding-bottom:22px;margin-bottom:28px;
+  border-bottom:1px solid var(--b1);
+}
+.ph-accent{
+  width:4px;height:100%;min-height:48px;border-radius:2px;flex-shrink:0;
+  margin-top:2px;
+}
+.ph-icon{
+  width:44px;height:44px;border-radius:12px;
+  display:grid;place-items:center;font-size:20px;flex-shrink:0;
+}
+.ph-icon-0{background:rgba(29,185,84,.1);border:1px solid rgba(29,185,84,.2)}
+.ph-icon-1{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2)}
+.ph-icon-2{background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.2)}
+.ph-name{font-family:'Syne',sans-serif;font-weight:800;font-size:24px;color:#fff}
+.ph-sub{font-size:12px;color:var(--t3);margin-top:3px}
+.ph-progress{margin-left:auto;text-align:right;flex-shrink:0}
+.php-bar{width:100px;height:2px;background:var(--b2);border-radius:99px;overflow:hidden;margin-bottom:4px}
+.php-fill{height:100%;border-radius:99px;width:0%;transition:width .5s}
+.php-fill-0{background:var(--pillar-0)}
+.php-fill-1{background:var(--pillar-1)}
+.php-fill-2{background:var(--pillar-2)}
+.php-txt{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--t3)}
+
+/* SUBPILLAR */
+.sub-hdr{
+  font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--t1);
+  margin:28px 0 12px;display:flex;align-items:center;gap:8px;
+}
+.sub-hdr::before{content:'';width:3px;height:13px;border-radius:2px;flex-shrink:0}
+.sub-hdr-0::before{background:var(--pillar-0)}
+.sub-hdr-1::before{background:var(--pillar-1)}
+.sub-hdr-2::before{background:var(--pillar-2)}
+
+/* CRITERION CARD */
+.ccard{
+  background:var(--s1);border:1px solid var(--b1);border-radius:14px;
+  margin-bottom:10px;transition:border-color .2s,box-shadow .2s;
+  animation:fadeUp .3s ease both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.ccard:hover{border-color:var(--b2)}
+.ccard.r-strong{border-color:var(--g);box-shadow:0 0 0 1px rgba(29,185,84,.1)}
+.ccard.r-ok{border-color:var(--ok);box-shadow:0 0 0 1px rgba(245,158,11,.1)}
+.ccard.r-weak{border-color:var(--weak);box-shadow:0 0 0 1px rgba(239,68,68,.1)}
+.ccard.eliminated{border-color:var(--elim)!important;box-shadow:0 0 0 1px rgba(255,107,53,.15)!important}
+
+.ccard-top{padding:16px 18px;display:flex;align-items:flex-start;gap:12px}
+.c-num{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  color:var(--t3);background:var(--s3);border-radius:5px;
+  padding:2px 7px;flex-shrink:0;margin-top:3px;
+}
+.c-body{flex:1;min-width:0}
+.c-text{font-size:14px;line-height:1.6;color:var(--t1);font-weight:500;margin-bottom:8px}
+
+/* QUESTIONS POPOVER — fixed to viewport, never clipped */
+.c-q-trig{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  color:var(--g);opacity:.7;cursor:pointer;
+  display:inline-flex;align-items:center;gap:4px;
+  transition:opacity .15s;user-select:none;
+}
+.c-q-trig:hover{opacity:1}
+.c-q-trig.active{opacity:1;color:#7ee89e}
+#qPopover{
+  display:none;position:fixed;z-index:9000;
+  width:480px;
+  background:var(--s2);border:1px solid var(--b2);
+  border-radius:14px;padding:20px;
+  box-shadow:0 24px 64px rgba(0,0,0,.85);
+}
+#qPopover.open{display:block}
+#qPopover .cqp-ul{display:flex;flex-direction:column;gap:12px}
+#qPopover .cqp-ul li{font-size:13px;color:#c0dfc8;line-height:1.7;padding-left:16px;position:relative;white-space:normal}
+#qPopover .cqp-ul li::before{content:'→';position:absolute;left:0;color:var(--g);font-size:11px;top:3px}
+.cqp-lbl{
+  font-family:'JetBrains Mono',monospace;font-size:9px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--g);margin-bottom:9px;
+}
+.cqp-ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.cqp-ul li{font-size:12px;color:#c0dfc8;line-height:1.65;padding-left:14px;position:relative}
+.cqp-ul li::before{content:'→';position:absolute;left:0;color:var(--g);font-size:10px;top:3px}
+
+/* RIGHT SIDE OF CARD */
+.c-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0}
+.rating-row{display:flex;gap:4px}
+.rb{
+  padding:5px 11px;border-radius:7px;border:1px solid var(--b2);
+  background:transparent;font-family:'Epilogue',sans-serif;
+  font-size:11px;font-weight:500;cursor:pointer;color:var(--t3);
+  transition:all .15s;white-space:nowrap;
+}
+.rb:hover{background:var(--s2);color:var(--t1)}
+.rb[data-r="weak"]:hover,.rb[data-r="weak"].on{border-color:var(--weak);color:var(--weak);background:rgba(239,68,68,.08)}
+.rb[data-r="ok"]:hover,.rb[data-r="ok"].on{border-color:var(--ok);color:var(--ok);background:rgba(245,158,11,.08)}
+.rb[data-r="strong"]:hover,.rb[data-r="strong"].on{border-color:var(--g);color:var(--g);background:rgba(29,185,84,.08)}
+.rb[data-r="na"]:hover,.rb[data-r="na"].on{border-color:var(--b3);color:var(--t2);background:rgba(255,255,255,.05)}
+.ccard.r-na{border-color:var(--b3)!important;opacity:.5}
+
+/* ELIMINATORY TOGGLE */
+.elim-toggle{
+  display:flex;align-items:center;gap:6px;cursor:pointer;
+  font-size:11px;color:var(--t3);transition:color .15s;
+  user-select:none;background:none;border:none;font-family:'Epilogue',sans-serif;
+  padding:0;
+}
+.elim-toggle:hover{color:var(--elim)}
+.elim-toggle.on{color:var(--elim)}
+.elim-toggle .et-box{
+  width:14px;height:14px;border-radius:4px;border:1px solid var(--b3);
+  background:transparent;transition:all .15s;display:grid;place-items:center;
+  flex-shrink:0;
+}
+.elim-toggle.on .et-box{background:var(--elim);border-color:var(--elim)}
+.elim-badge{
+  display:none;font-family:'JetBrains Mono',monospace;font-size:9px;
+  background:rgba(255,107,53,.12);color:var(--elim);
+  border:1px solid rgba(255,107,53,.2);border-radius:99px;
+  padding:2px 7px;margin-left:6px;
+}
+.ccard.eliminated .elim-badge{display:inline}
+
+/* NOTES */
+.c-notes-wrap{padding:0 18px 14px}
+.c-notes{
+  width:100%;background:var(--s2);border:1px solid var(--b1);
+  border-radius:9px;padding:10px 13px;
+  font-family:'Epilogue',sans-serif;font-size:13px;color:var(--t1);
+  resize:none;min-height:58px;outline:none;
+  transition:border-color .2s;line-height:1.6;
+}
+.c-notes::placeholder{color:var(--t3)}
+.c-notes:focus{border-color:var(--g)}
+
+/* RIGHT PANEL */
+.rightpanel{
+  background:var(--s1);border-left:1px solid var(--b1);
+  padding:20px;overflow-y:auto;
+  display:flex;flex-direction:column;gap:14px;
+}
+.rp-block{background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:14px}
+.rp-lbl{
+  font-family:'JetBrains Mono',monospace;font-size:9px;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--t3);margin-bottom:10px;
+}
+/* mini progress dots */
+.mini-dots{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.mdot{
+  width:9px;height:9px;border-radius:50%;
+  background:var(--b2);transition:background .3s;
+}
+.mdot.strong{background:var(--g)}
+.mdot.ok{background:var(--ok)}
+.mdot.weak{background:var(--weak)}
+.mdot.elim{background:var(--elim);box-shadow:0 0 0 2px rgba(255,107,53,.3)}
+
+.rp-stat-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.rps-label{font-size:12px;color:var(--t2)}
+.rps-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500}
+.rps-strong{color:var(--g)} .rps-ok{color:var(--ok)} .rps-weak{color:var(--weak)} .rps-elim{color:var(--elim)}
+
+/* VERDICT */
+.v-btns{display:flex;flex-direction:column;gap:7px}
+.vb{
+  padding:10px 14px;border-radius:9px;border:1px solid var(--b2);
+  background:transparent;font-family:'Epilogue',sans-serif;font-size:12px;
+  cursor:pointer;display:flex;align-items:center;gap:8px;
+  color:var(--t2);transition:all .15s;text-align:left;width:100%;
+}
+.vb:hover{background:var(--s3);color:var(--t1)}
+.vb.sel-approve{border-color:var(--g);color:var(--g);background:var(--glow)}
+.vb.sel-hold{border-color:var(--ok);color:var(--ok);background:rgba(245,158,11,.07)}
+.vb.sel-reject{border-color:var(--weak);color:var(--weak);background:rgba(239,68,68,.07)}
+.vdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.vda{background:var(--g)}.vdh{background:var(--ok)}.vdr{background:var(--weak)}
+
+.gnotes{
+  width:100%;background:var(--s1);border:1px solid var(--b1);border-radius:9px;
+  padding:10px 12px;font-family:'Epilogue',sans-serif;font-size:12px;
+  color:var(--t1);resize:none;min-height:80px;outline:none;
+  transition:border-color .2s;line-height:1.6;
+}
+.gnotes::placeholder{color:var(--t3)}
+.gnotes:focus{border-color:var(--g)}
+
+.submit-btn{
+  width:100%;padding:13px;background:var(--g);color:#fff;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:13px;
+  border:none;border-radius:10px;cursor:pointer;letter-spacing:.04em;
+  transition:background .2s,transform .15s;
+}
+.submit-btn:hover{background:var(--g2);transform:translateY(-1px)}
+
+/* ══ CONSOLIDATION ══ */
+#consolidation{display:none}
+
+.dash-topbar{
+  height:58px;background:rgba(11,11,11,.96);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--b1);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;
+}
+.dash-brand{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:#fff}
+.dash-brand em{color:var(--g);font-style:normal}
+.dash-candidate{font-size:13px;color:var(--t2)}
+.dash-candidate strong{color:var(--t1);font-weight:500}
+.new-btn{
+  padding:7px 16px;background:transparent;border:1px solid var(--b2);
+  border-radius:8px;color:var(--t2);font-family:'Epilogue',sans-serif;
+  font-size:12px;cursor:pointer;transition:all .15s;
+}
+.new-btn:hover{border-color:var(--b3);color:var(--t1)}
+
+.dash-body{padding:32px;max-width:1100px;margin:0 auto}
+
+/* HEADER STATS */
+.dash-stats{
+  display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;margin-bottom:32px;
+}
+.dstat{
+  background:var(--s1);border:1px solid var(--b1);border-radius:14px;
+  padding:20px;
+}
+.dstat-label{
+  font-family:'JetBrains Mono',monospace;font-size:9px;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--t3);margin-bottom:8px;
+}
+.dstat-val{font-family:'Syne',sans-serif;font-weight:800;font-size:32px;color:#fff}
+.dstat-sub{font-size:12px;color:var(--t3);margin-top:4px}
+.dstat-val.green{color:var(--g)}
+.dstat-val.red{color:var(--weak)}
+.dstat-val.orange{color:var(--ok)}
+
+/* VERDICT INDICATOR */
+.verdict-indicator{
+  background:var(--s1);border:1px solid var(--b1);border-radius:14px;
+  padding:20px 24px;display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:28px;
+}
+.vi-label{font-size:13px;color:var(--t2)}
+.vi-val{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:18px;
+  padding:8px 20px;border-radius:10px;
+}
+.vi-approve{background:rgba(29,185,84,.12);color:var(--g);border:1px solid rgba(29,185,84,.25)}
+.vi-hold{background:rgba(245,158,11,.1);color:var(--ok);border:1px solid rgba(245,158,11,.2)}
+.vi-reject{background:rgba(239,68,68,.1);color:var(--weak);border:1px solid rgba(239,68,68,.2)}
+.vi-pending{background:var(--s2);color:var(--t3);border:1px solid var(--b2)}
+.vi-elim-warning{
+  font-size:12px;color:var(--elim);
+  background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.2);
+  padding:6px 14px;border-radius:8px;
+  font-family:'JetBrains Mono',monospace;
+}
+
+/* PILLAR COLUMNS */
+.pillar-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px}
+.pc{background:var(--s1);border:1px solid var(--b1);border-radius:16px;overflow:hidden}
+.pc-header{
+  padding:18px 20px;border-bottom:1px solid var(--b1);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.pch-name{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:#fff}
+.pch-bar-wrap{margin-top:8px}
+.pch-bar{height:3px;background:var(--b2);border-radius:99px;overflow:hidden}
+.pch-fill{height:100%;border-radius:99px;width:0%;transition:width .5s}
+.pch-fill-0{background:var(--pillar-0)}
+.pch-fill-1{background:var(--pillar-1)}
+.pch-fill-2{background:var(--pillar-2)}
+
+.pc-body{padding:16px 20px}
+.pc-interviewer{
+  font-size:11px;color:var(--t3);margin-bottom:12px;
+  display:flex;align-items:center;gap:6px;
+}
+.pc-interviewer .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--b3);
+}
+.pc-interviewer.submitted .dot{background:var(--g)}
+
+.pc-verdict-pill{
+  font-size:11px;padding:4px 10px;border-radius:99px;
+  font-weight:600;width:fit-content;margin-bottom:12px;
+}
+.pcvp-approve{background:rgba(29,185,84,.1);color:var(--g)}
+.pcvp-hold{background:rgba(245,158,11,.08);color:var(--ok)}
+.pcvp-reject{background:rgba(239,68,68,.08);color:var(--weak)}
+.pcvp-pending{background:var(--s3);color:var(--t3)}
+
+/* CRITERION SUMMARY ROWS */
+.cs-row{
+  display:flex;align-items:flex-start;gap:8px;
+  padding:8px 0;border-bottom:1px solid var(--b1);
+  font-size:12px;color:var(--t2);line-height:1.5;
+}
+.cs-row:last-child{border-bottom:none}
+.csr-rating{
+  flex-shrink:0;font-family:'JetBrains Mono',monospace;
+  font-size:10px;padding:2px 7px;border-radius:5px;margin-top:1px;
+}
+.csr-strong{background:rgba(29,185,84,.1);color:var(--g)}
+.csr-ok{background:rgba(245,158,11,.08);color:var(--ok)}
+.csr-weak{background:rgba(239,68,68,.08);color:var(--weak)}
+.csr-none{background:var(--s3);color:var(--t3)}
+.csr-elim{
+  font-size:9px;color:var(--elim);background:rgba(255,107,53,.1);
+  border-radius:99px;padding:1px 6px;flex-shrink:0;margin-top:3px;
+}
+.csr-note{
+  font-size:11px;color:var(--t3);font-style:italic;margin-top:4px;
+  line-height:1.5;
+}
+.cs-text{flex:1}
+
+.pc-empty{
+  padding:24px 0;text-align:center;
+  font-size:12px;color:var(--t3);font-style:italic;
+}
+
+/* ELIM WARNING BANNER */
+.elim-banner{
+  background:rgba(255,107,53,.06);border:1px solid rgba(255,107,53,.2);
+  border-radius:12px;padding:16px 20px;margin-bottom:20px;
+  display:none;
+}
+.elim-banner.on{display:block}
+.eb-title{
+  font-family:'Syne',sans-serif;font-weight:700;font-size:13px;
+  color:var(--elim);margin-bottom:8px;display:flex;align-items:center;gap:8px;
+}
+.eb-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.eb-list li{font-size:12px;color:#f4a98a;padding-left:14px;position:relative}
+.eb-list li::before{content:'⚠';position:absolute;left:0;font-size:10px}
+
+/* EXPORT */
+.export-row{display:flex;gap:12px;margin-top:8px}
+.exp-btn{
+  flex:1;padding:13px;background:var(--g);color:#fff;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:13px;
+  border:none;border-radius:10px;cursor:pointer;letter-spacing:.04em;
+  transition:background .2s,transform .15s;
+}
+.exp-btn:hover{background:var(--g2);transform:translateY(-1px)}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:24px;right:24px;z-index:9999;
+  background:var(--s2);color:var(--t1);padding:11px 18px;
+  border-radius:9px;font-size:13px;border:1px solid var(--b2);
+  border-left:3px solid var(--g);box-shadow:0 8px 32px rgba(0,0,0,.5);
+  transform:translateY(60px);opacity:0;pointer-events:none;
+  transition:all .3s cubic-bezier(.4,0,.2,1);
+}
+.toast.on{transform:translateY(0);opacity:1}
+
+@media(max-width:900px){
+  .shell{grid-template-columns:1fr}
+  .leftnav,.rightpanel{display:none}
+  .pillar-cols{grid-template-columns:1fr}
+  .dash-stats{grid-template-columns:1fr 1fr}
+}
+
+/* INLINE QUESTIONS */
+.c-questions{padding:0 18px 4px;display:flex;flex-direction:column;gap:10px}
+.c-qitem{background:var(--s2);border-radius:8px;border:1px solid var(--b2);overflow:hidden}
+.c-qitem-q{
+  font-size:12px;color:var(--g);line-height:1.55;padding:10px 14px 8px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.01em;
+  border-bottom:1px solid var(--b2);display:flex;align-items:flex-start;gap:8px
+}
+.c-qitem-num{color:var(--g);font-weight:700;flex-shrink:0;min-width:28px;font-family:'JetBrains Mono',monospace;font-size:11px}
+.c-qitem-a{
+  width:100%;background:transparent;border:none;resize:none;
+  font-family:'Epilogue',sans-serif;font-size:12px;color:var(--t1);
+  padding:8px 14px;line-height:1.6;min-height:52px;
+  outline:none;display:block;box-sizing:border-box
+}
+.c-qitem-a::placeholder{color:var(--t3);font-style:italic}
+.c-qitem-a:focus{background:rgba(255,255,255,.02)}
+.c-notes-wrap{display:none}
+
+/* ══ AI ASSESSMENT ══ */
+.ai-btn{
+  width:100%;padding:11px 14px;background:transparent;
+  border:1px solid rgba(29,185,84,.35);border-radius:10px;
+  color:var(--g);font-family:'Syne',sans-serif;font-weight:700;font-size:12px;
+  cursor:pointer;letter-spacing:.04em;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.ai-btn:hover{background:rgba(29,185,84,.08);border-color:var(--g)}
+.ai-btn:disabled{opacity:.4;cursor:not-allowed}
+.ai-btn .ai-spin{
+  width:12px;height:12px;border:1.5px solid rgba(29,185,84,.3);
+  border-top-color:var(--g);border-radius:50%;
+  animation:spin .6s linear infinite;display:none;
+}
+.ai-btn.loading .ai-spin{display:block}
+.ai-btn.loading .ai-btn-txt{opacity:.6}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Granola import modal */
+.granola-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:8000;
+  align-items:center;justify-content:center;
+}
+.granola-overlay.open{display:flex}
+.granola-modal{
+  background:var(--s1);border:1px solid var(--b2);border-radius:16px;
+  padding:28px;width:560px;max-height:80vh;overflow-y:auto;
+  position:relative;
+}
+.gm-title{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#fff;
+  display:flex;align-items:center;gap:10px;margin-bottom:6px;
+}
+.gm-dot{width:8px;height:8px;border-radius:50%;background:var(--g);flex-shrink:0}
+.gm-sub{font-size:12px;color:var(--t3);margin-bottom:20px}
+.gm-meeting{
+  padding:12px 14px;border:1px solid var(--b2);border-radius:10px;
+  margin-bottom:8px;cursor:pointer;transition:all .15s;
+}
+.gm-meeting:hover{border-color:var(--g);background:rgba(29,185,84,.04)}
+.gm-meeting.sel{border-color:var(--g);background:rgba(29,185,84,.07)}
+.gm-mtitle{font-size:13px;font-weight:500;color:var(--t1);margin-bottom:3px}
+.gm-mmeta{font-size:11px;color:var(--t3)}
+.gm-badge{
+  font-family:'JetBrains Mono',monospace;font-size:9px;
+  background:rgba(29,185,84,.15);color:var(--g);
+  border-radius:99px;padding:2px 8px;margin-left:8px;
+}
+.gm-divider{height:1px;background:var(--b1);margin:16px 0}
+.gm-transcript-lbl{
+  font-family:'JetBrains Mono',monospace;font-size:9px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:8px;
+}
+.gm-transcript{
+  width:100%;background:var(--s2);border:1px solid var(--b1);border-radius:9px;
+  padding:12px;font-family:'Epilogue',sans-serif;font-size:12px;
+  color:var(--t1);resize:vertical;min-height:120px;outline:none;line-height:1.7;
+}
+.gm-transcript:focus{border-color:var(--g)}
+.gm-transcript::placeholder{color:var(--t3);font-style:italic}
+.gm-actions{display:flex;gap:10px;margin-top:16px}
+.gm-cancel{
+  flex:1;padding:11px;background:transparent;border:1px solid var(--b2);
+  border-radius:9px;color:var(--t2);font-family:'Epilogue',sans-serif;
+  font-size:13px;cursor:pointer;transition:all .15s;
+}
+.gm-cancel:hover{border-color:var(--b3);color:var(--t1)}
+.gm-analyze{
+  flex:2;padding:11px;background:var(--g);color:#fff;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:13px;
+  border:none;border-radius:9px;cursor:pointer;transition:all .15s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.gm-analyze:hover{background:var(--g2)}
+.gm-analyze:disabled{opacity:.4;cursor:not-allowed}
+.gm-analyze .ai-spin{width:12px;height:12px;border:1.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none}
+.gm-analyze.loading .ai-spin{display:block}
+.gm-close{
+  position:absolute;top:16px;right:16px;width:28px;height:28px;
+  background:var(--s3);border:none;border-radius:50%;color:var(--t2);
+  cursor:pointer;font-size:14px;display:grid;place-items:center;
+}
+.gm-close:hover{color:var(--t1);background:var(--b2)}
+</style>
+</head>
+<body>
+
+<!-- ══════════ HOME ══════════ -->
+<div id="home">
+  <div class="home-inner">
+    <div class="home-brand">
+      <img src="data:image/jpeg;base64,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" style="height:36px;" alt="Mottu">
+      <div>
+        <div class="hb-name" style="display:none">Mottu · Bar Raiser</div>
+
+      </div>
+    </div>
+
+    <div class="home-hero">
+      <h1>Quem é o candidato<br>e qual é o seu papel?</h1>
+      <p>Cada bar raiser cobre um pilar cultural em profundidade. Após os 3 feedbacks, o painel de consolidação agrega tudo automaticamente.</p>
+    </div>
+
+    <div class="home-inputs">
+      <div class="hi"><label>Nome do candidato</label><input id="hCand" placeholder="Ex: Ana Silva"></div>
+      <div class="hi"><label>Vaga</label><input id="hRole" placeholder="Ex: Product Manager"></div>
+      <div class="hi"><label>Seu nome (entrevistador)</label><input id="hName" placeholder="Ex: Carlos Souza"></div>
+      <div class="hi"><label>Data</label><input type="date" id="hDate"></div>
+    </div>
+
+
+    <div class="level-selector">
+      <label>Nível do candidato</label>
+      <div class="level-cards">
+        <div class="lc" id="lc0" onclick="selectLevel(0)">
+          <div class="lc-icon">🌱</div>
+          <div class="lc-name">Estágio</div>
+          <div class="lc-desc">Sem exp. formal</div>
+        </div>
+        <div class="lc" id="lc1" onclick="selectLevel(1)">
+          <div class="lc-icon">🔰</div>
+          <div class="lc-name">Júnior</div>
+          <div class="lc-desc">1–2 anos</div>
+        </div>
+        <div class="lc" id="lc2" onclick="selectLevel(2)">
+          <div class="lc-icon">⚙️</div>
+          <div class="lc-name">Pleno</div>
+          <div class="lc-desc">3–5 anos</div>
+        </div>
+        <div class="lc" id="lc3" onclick="selectLevel(3)">
+          <div class="lc-icon">🎯</div>
+          <div class="lc-name">Sênior</div>
+          <div class="lc-desc">5+ anos</div>
+        </div>
+        <div class="lc" id="lc4" onclick="selectLevel(4)">
+          <div class="lc-icon">🏆</div>
+          <div class="lc-name">Liderança</div>
+          <div class="lc-desc">Gestão de time</div>
+        </div>
+      </div>
+    </div>
+    <div class="role-cards">
+      <div class="rc" id="rc0" onclick="selectRole(0)">
+        <div class="rc-icon">⚡</div>
+        <div><div class="rc-title">Obstinados</div><div class="rc-badge" id="rcb0">Pilar 1</div></div>
+        <div class="rc-desc">Propósito, Coragem e Senso de Urgência</div>
+      </div>
+      <div class="rc" id="rc1" onclick="selectRole(1)">
+        <div class="rc-icon">🔍</div>
+        <div><div class="rc-title">Profundos</div><div class="rc-badge" id="rcb1">Pilar 2</div></div>
+        <div class="rc-desc">Profundidade, Tech e Honestidade Intelectual</div>
+      </div>
+      <div class="rc" id="rc2" onclick="selectRole(2)">
+        <div class="rc-icon">🌿</div>
+        <div><div class="rc-title">Raiz</div><div class="rc-badge" id="rcb2">Pilar 3</div></div>
+        <div class="rc-desc">Mão na Graça, Ombro a Ombro e Liderança</div>
+      </div>
+      <div class="rc" id="rc3" onclick="selectRole(3)">
+        <div class="rc-icon">📊</div>
+        <div><div class="rc-title">Consolidação</div><div class="rc-badge" id="rcb3">Painel</div></div>
+        <div class="rc-desc">Visão geral dos 3 pilares e decisão final</div>
+      </div>
+    </div>
+
+    <button class="go-btn" id="goBtn" onclick="launch()" disabled>Selecione seu papel acima</button>
+  </div>
+</div>
+
+<!-- ══════════ INTERVIEW ══════════ -->
+<div id="interview">
+  <div class="topbar">
+    <div class="tb-left">
+      <img src="data:image/jpeg;base64,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" style="height:24px;" alt="Mottu">
+      <div class="tb-divider"></div>
+      <div class="tb-who" id="tbWho"></div>
+      <div class="tb-divider"></div>
+      <div class="tb-pillar-badge" id="tbPillarBadge"></div>
+    </div>
+    <div class="tb-right">
+      <div class="timer-pill">
+        <span class="tp-t" id="tClock">00:00</span>
+        <button class="tp-btn" id="tBtn" onclick="toggleTimer()" title="Play/Pause">▶</button>
+        <button class="tp-btn" onclick="resetTimer()" title="Reset">↺</button>
+      </div>
+      <div class="score-pill">
+        <span class="sp-n" id="spN">0</span>
+        <span class="sp-l">fortes</span>
+        <span class="sp-pct" id="spP">0%</span>
+      </div>
+      <button class="back-btn" onclick="goHome()">← Início</button>
+    </div>
+  </div>
+
+  <div class="shell">
+    <nav class="leftnav" id="leftnav"></nav>
+    <div class="scroll-col" id="scrollCol"></div>
+    <aside class="rightpanel" id="rightpanel"></aside>
+  </div>
+</div>
+
+<!-- ══════════ CONSOLIDATION ══════════ -->
+<div id="consolidation">
+  <div class="dash-topbar">
+    <div class="dash-brand"><img src="data:image/jpeg;base64,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" style="height:24px;vertical-align:middle;margin-right:10px;" alt="Mottu"> · <em>Consolidação</em></div>
+    <div class="dash-candidate" id="dCandInfo"></div>
+    <button class="new-btn" onclick="goHome()">← Início</button>
+  </div>
+  <div class="dash-body" id="dashBody"></div>
+</div>
+
+<div id="qPopover"></div>
+<div class="toast" id="toast"></div>
+
+<!-- ══ GRANOLA AI MODAL ══ -->
+<div class="granola-overlay" id="granolaOverlay">
+  <div class="granola-modal">
+    <button class="gm-close" onclick="closeGranola()">✕</button>
+    <div class="gm-title"><div class="gm-dot"></div>Avaliar com IA via Granola</div>
+    <div class="gm-sub">Selecione a reunião ou cole a transcrição diretamente. O Claude vai preencher os ratings automaticamente.</div>
+
+    <div class="gm-transcript-lbl">Reuniões recentes</div>
+    <div id="gmMeetings"></div>
+
+    <div class="gm-divider"></div>
+    <div class="gm-transcript-lbl">Transcrição (colada manualmente ou importada acima)</div>
+    <textarea class="gm-transcript" id="gmTranscript" placeholder="Cole aqui a transcrição da entrevista do Granola...&#10;&#10;Ex:&#10;Entrevistador: Me conta de um momento em que algo deu errado...&#10;Candidato: Aconteceu bastante. Uma vez..."></textarea>
+
+    <div class="gm-actions">
+      <button class="gm-cancel" onclick="closeGranola()">Cancelar</button>
+      <button class="gm-analyze" id="gmAnalyzeBtn" onclick="runAIAssessment()">
+        <div class="ai-spin"></div>
+        <span id="gmAnalyzeTxt">✨ Analisar e preencher ratings</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══ DATA ══ */
+/* ══ LEVEL QUESTIONS ══
+   5 levels: 0=estagio, 1=junior, 2=pleno, 3=senior, 4=lideranca
+   Each criterion gets questions array per level
+   Structure: LEVEL_Q[pillarIdx][subIdx][criterionIdx][levelIdx] = [questions]
+*/
+const LEVELS = ['Estágio','Júnior','Pleno','Sênior','Liderança'];
+
+// Questions indexed by [pillar][sub][criterion][level]
+const LQ = [
+  // ── PILAR 0: OBSTINADOS ──
+  [
+    // Sub 0: Propósito
+    [
+      // Criterion 0: motivação genuína por impacto
+      [
+        ["Por que você quer estagiar aqui e não em outro lugar?","O que mais te anima no problema que a Mottu resolve?","Como você imagina que seu trabalho aqui vai impactar quem usa o serviço?"],
+        ["O que te motivou a sair do seu último emprego e escolher esse processo?","Qual foi o projeto em que você sentiu que gerou mais valor real para alguém?","Em 2 anos aqui, o que seria um sucesso para você?"],
+        ["Conte sobre um projeto que te deixou orgulhoso — qual foi o impacto real para quem usou?","Por que essa vaga? O que te conecta com o problema que a Mottu resolve?","O que é sucesso para você em 2 anos nessa posição?"],
+        ["Qual o maior impacto que você já gerou na carreira — medido em algo concreto?","O que te trouxe até aqui ao invés de continuar onde estava?","Como você pensa no legado que quer construir nos próximos anos?"],
+        ["Como você conecta o trabalho do seu time com o impacto final no cliente?","Qual decisão estratégica você tomou pensando em legado, não em resultado de curto prazo?","Por que a Mottu faz sentido para o que você quer construir?"]
+      ],
+      // Criterion 1: articular valor concreto gerado
+      [
+        ["Você já fez algum projeto na faculdade, voluntariado ou pessoal que gerou resultado para alguém? Conta.","Como você sabe quando um trabalho seu foi bom?","Você se lembra de uma vez que ajudou alguém e fez diferença de verdade?"],
+        ["No seu emprego anterior, como você sabia que estava gerando valor?","Me dê um exemplo de entrega que impactou alguém além de você.","Como você media se seu trabalho estava tendo efeito?"],
+        ["Dê um exemplo de métrica que você gerou e que mudou algo para o cliente final.","Como você media impacto no cliente no seu último emprego?","Qual resultado seu você mais se orgulha e por quê?"],
+        ["Qual foi a iniciativa com maior ROI que você conduziu? Como você provou o resultado?","Me dê um exemplo onde você conectou seu trabalho a uma métrica de negócio clara.","Como você garante que seu time está gerando valor real, não só entregando tarefas?"],
+        ["Como você garantia que as decisões do seu time tinham impacto mensurável?","Me dê um exemplo onde você mudou a direção de uma área por causa de resultado concreto.","Qual foi o maior impacto de negócio que você pode atribuir diretamente ao seu trabalho?"]
+      ],
+      // Criterion 2: legado de longo prazo
+      [
+        ["O que você quer ter aprendido ou construído ao final desse estágio?","Você já abriu mão de algo mais fácil por algo mais importante? Conta.","Como você pensa no seu desenvolvimento nos próximos 3 anos?"],
+        ["Você já tomou uma decisão de carreira pensando no longo prazo, mesmo sendo difícil no curto?","O que você quer ter construído em 3 anos?","Como você equilibra entregas imediatas com o que é importante mas não urgente?"],
+        ["Conte de uma decisão pensando no longo prazo, mesmo sendo mais difícil no curto.","Qual legado você quer deixar na próxima empresa?","Como você prioriza o que é estratégico vs. o que é urgente?"],
+        ["Qual foi a aposta de longo prazo mais importante que você fez na carreira?","Como você garante que o time pensa além do sprint atual?","Me dê um exemplo de quando você sacrificou resultado de curto prazo por algo mais importante."],
+        ["Qual foi a mudança estrutural mais difícil que você liderou pensando em 3+ anos à frente?","Como você constrói times e processos que sobrevivem a você?","Me conte de uma decisão impopular que você tomou porque era certa no longo prazo."]
+      ]
+    ],
+    // Sub 1: Coragem
+    [
+      // Criterion 0: desafiou status quo
+      [
+        ["Você já discordou de um professor, líder de projeto ou grupo e falou isso abertamente?","Você já defendeu uma ideia impopular com seus colegas?","Me conta de uma situação em que você foi contra a corrente."],
+        ["Você já discordou do seu gestor sobre algo importante? O que aconteceu?","Me conta de uma vez que você questionou uma decisão já tomada.","Como você reage quando acha que o time está indo na direção errada?"],
+        ["Conte de uma vez que você discordou do seu gestor. O que aconteceu?","Você já defendeu uma posição impopular mesmo sob pressão?","Como você age quando vê uma decisão sendo tomada de forma equivocada?"],
+        ["Qual foi a vez que você foi mais contra o consenso — e estava certo?","Me conta de uma mudança que você forçou que gerou resistência mas valeu a pena.","Como você constrói argumentos para mudar posições já estabelecidas?"],
+        ["Qual foi a decisão mais difícil de reverter que você teve que fazer — e como você conduziu?","Me conta de uma vez que você foi contra a opinião do seu board, CEO ou par sênior.","Como você cria cultura de desafio construtivo no seu time?"]
+      ],
+      // Criterion 1: admite erros com clareza
+      [
+        ["Me conta de uma vez que você errou em um projeto ou trabalho em grupo. O que você fez?","Você já percebeu no meio de um projeto que estava indo pelo caminho errado? Como você agiu?","Como você reage quando alguém aponta um erro seu?"],
+        ["Qual foi o maior erro profissional que você cometeu? O que mudou depois?","Me conta de uma vez que você estava errado e precisou reconhecer isso para o time.","Como você lida com feedbacks negativos?"],
+        ["Qual foi o maior erro profissional que você cometeu? O que mudou depois?","Me conta de uma vez que você estava errado e outro estava certo.","Como você processa e age sobre um erro grave que cometeu?"],
+        ["Qual foi o erro mais caro que você cometeu — em dinheiro, tempo ou pessoas?","Como você cria no time uma cultura em que errar é seguro desde que se aprenda?","Me conta de uma vez que você mudou uma convicção forte depois de errar."],
+        ["Qual foi o erro de liderança mais grave que você cometeu? O que você aprendeu?","Como você garante que seu time reporta problemas cedo em vez de esconder?","Me conta de uma decisão sua que prejudicou alguém — e como você lidou com isso."]
+      ],
+      // Criterion 2: tolerância zero à mediocridade
+      [
+        ["Você já ficou frustrado com a qualidade de um trabalho em grupo? Como você reagiu?","O que você faz quando percebe que um resultado que vai sair está abaixo do que poderia ser?","Como você define o que é um trabalho bom vs. mediano?"],
+        ["Como você reage quando o padrão de entrega ao redor está abaixo do que você espera?","Você já teve conflito por querer um padrão mais alto que os outros no time?","Me conta de uma situação em que você se recusou a entregar algo abaixo do que achava certo."],
+        ["Como você age quando percebe que o padrão do time está baixo?","Você já perdeu paciência com mediocridade? Me conta um caso real.","Como você equilibra velocidade de entrega com qualidade?"],
+        ["Como você garante padrão alto quando há pressão de tempo?","Me conta de uma vez que você recusou entregar algo que não estava à altura.","Como você trata membros do time que consistentemente entregam abaixo do esperado?"],
+        ["Como você define e comunica padrão de excelência para um time?","Me conta de uma situação em que você teve que tomar uma decisão difícil sobre alguém por padrão de entrega.","Como você equilibra empurrar o time vs. criar um ambiente de medo?"]
+      ]
+    ],
+    // Sub 2: Senso de Urgência
+    [
+      // Criterion 0: entrega acelerada sem perder qualidade
+      [
+        ["Você já teve que entregar algo importante no prazo apertado? Como foi?","Me conta de um projeto em que você foi mais rápido que o esperado.","Como você prioriza quando tem muita coisa para fazer ao mesmo tempo?"],
+        ["Me dê um exemplo de entrega que você acelerou sem abrir mão da qualidade.","Como você lida quando percebe que uma deadline importante está em risco?","Você já reorganizou seu trabalho inteiro para garantir uma entrega crítica?"],
+        ["Me dê um exemplo de quando você acelerou uma entrega sem abrir mão da qualidade.","Você já priorizou diferente do processo para chegar mais rápido?","Como você decide o que é rápido suficiente vs. o que precisa de mais tempo?"],
+        ["Me conta de um projeto em que você reduziu drasticamente o tempo de entrega mantendo qualidade — como?","Como você calibra velocidade vs. excelência no dia a dia?","Qual foi a entrega mais crítica de prazo que você conduziu? O que você fez diferente?"],
+        ["Como você instala senso de urgência num time sem criar ansiedade ou burnout?","Me conta de uma iniciativa em que você comprimiu um roadmap sem comprometer o resultado.","Como você decide quando acelerar vs. quando desacelerar para fazer certo?"]
+      ],
+      // Criterion 1: iniciativa própria
+      [
+        ["Você já resolveu um problema que ninguém tinha te pedido para resolver?","Me conta de uma situação em que você viu algo errado e foi lá corrigir sem esperar ninguém pedir.","Como você age quando identifica um problema mas não é sua responsabilidade?"],
+        ["Me conta uma situação onde ninguém pediu mas você foi e resolveu assim mesmo.","Como você age quando vê algo importante que está sendo negligenciado?","Você já assumiu uma responsabilidade que não era sua porque era a coisa certa a fazer?"],
+        ["Me conta uma situação onde ninguém pediu mas você foi e resolveu assim mesmo.","Você já puxou um problema que não era seu porque viu que estava errado?","Como você distingue o que é sua responsabilidade do que você deveria assumir mesmo sem ser pedido?"],
+        ["Qual foi a iniciativa mais importante que você tomou sem ninguém pedir?","Como você garante que o seu time não espera ser mandado para agir?","Me conta de um problema sistêmico que você identificou e resolveu por conta própria."],
+        ["Como você cria cultura de iniciativa num time sem criar caos e desalinhamento?","Me conta de uma situação em que você interveio num problema fora da sua área porque era o certo.","Como você balanceia iniciativa própria com alinhamento organizacional?"]
+      ],
+      // Criterion 2: vai até o fim
+      [
+        ["Você já começou algo que ficou difícil no meio mas foi até o fim? Me conta.","Como você age quando um projeto que você está tocando começa a travar?","Você já desistiu de algo e se arrependeu?"],
+        ["Tem algum problema que você assumiu, foi muito mais difícil que o esperado, mas você foi até o fim?","Quando você desistiu de algo e hoje se arrepende?","Como você age quando um problema que você assumiu começa a parecer impossível?"],
+        ["Tem algum problema que você assumiu, foi muito mais difícil que o esperado, mas você foi até o fim?","Quando você desistiu de algo e hoje se arrepende?","Como você decide quando persistir vs. quando pivotar ou abandonar?"],
+        ["Qual foi o problema mais difícil que você foi até o fim? O que te manteve?","Me conta de uma vez que você quis desistir mas não desistiu — o que foi diferente?","Como você garante que compromissos assumidos são honrados mesmo quando o contexto muda?"],
+        ["Como você garante que seu time conclui o que começa, mesmo sob pressão?","Me conta de um projeto que quase morreu e que você ressuscitou — como?","Como você lida quando um compromisso importante está prestes a ser descumprido?"]
+      ]
+    ]
+  ],
+
+  // ── PILAR 1: PROFUNDOS ──
+  [
+    // Sub 0: Profundidade
+    [
+      // Criterion 0: domínio no décimo nível
+      [
+        ["Me explica algo que você estudou ou se dedicou muito — como se eu soubesse pouco do assunto.","Qual é o assunto que você mais sabe? Me ensina algo sobre ele que eu provavelmente não sei.","Como você aprende algo novo? Me dê um exemplo recente."],
+        ["Me explique [tema da vaga] de forma simples. Agora vai mais fundo — o que a maioria ignora?","Qual foi a última coisa que você aprendeu que mudou como você trabalha?","O que você sabe sobre [área] que a maioria dos júniores não sabe ainda?"],
+        ["Me explique [tema central da vaga] para um leigo. Agora para um especialista.","Qual detalhe a maioria ignora na sua área mas que faz toda a diferença?","Por que [conceito da área] funciona assim e não de outra forma?"],
+        ["Me explique [tema da vaga] assumindo que eu sou especialista. Vá fundo.","Qual foi a última vez que sua visão sobre [área] mudou radicalmente — por quê?","O que você sabe sobre [tema] que levou anos para entender de verdade?"],
+        ["Como você garante que seu time tem profundidade e não só amplitude?","Qual é o tema que você domina melhor que qualquer pessoa da sua área? Me convença.","Me faz uma pergunta difícil sobre [área] que a maioria dos líderes não conseguiria responder."]
+      ],
+      // Criterion 1: destrinchar problemas até a causa raiz
+      [
+        ["Me descreve como você abordaria um problema que nunca viu antes.","Se você descobrisse que sua nota numa matéria caiu muito, como você investigaria o motivo?","Como você distingue o sintoma de um problema da causa real?"],
+        ["Descreva sua metodologia para resolver um problema que nunca viu antes.","Me dê um exemplo de problema que parecia simples mas era complexo por baixo.","Como você garante que está resolvendo a causa e não o sintoma?"],
+        ["Seu KPI principal caiu 30% hoje de manhã. Como você investigaria isso?","Descreva sua metodologia para resolver um problema que nunca viu antes.","Me dê um exemplo de quando você chegou à causa raiz de algo que outros não conseguiram."],
+        ["Me descreva o problema mais complexo que você já desestruturou — como foi o processo?","Como você conduz uma investigação de causa raiz quando os dados são ambíguos?","Qual foi a vez que você estava mais convicto de uma hipótese e estava errado?"],
+        ["Como você garante que seu time resolve problemas na raiz e não apaga incêndio?","Me descreva uma crise que você conduziu do sintoma até a solução estrutural.","Como você decide quando aprofundar vs. quando agir com o que sabe?"]
+      ],
+      // Criterion 2: autonomia para resolver sem aprovação
+      [
+        ["Você já resolveu um problema sozinho quando poderia ter pedido ajuda? Por que escolheu fazer sozinho?","Me conta de uma situação em que você não sabia a resposta mas foi descobrir por conta própria.","Como você age quando está travado num problema e não tem ninguém para perguntar?"],
+        ["Você já tomou uma decisão importante sem aprovação do gestor? O que aconteceu?","Qual foi a decisão mais arriscada que você tomou sozinho no trabalho?","Como você decide o que você pode decidir sozinho vs. o que precisa de aprovação?"],
+        ["Você já tomou uma decisão importante sem aprovação do gestor? O que aconteceu?","Qual foi a decisão mais arriscada que você tomou sozinho?","Como você define os limites do que você pode decidir sozinho?"],
+        ["Qual foi a decisão de maior impacto que você tomou sem pedir aprovação?","Como você constrói confiança com seus stakeholders para ter mais autonomia?","Me conta de uma vez que você agiu sem aprovação e foi questionado — como você respondeu?"],
+        ["Como você distribui autonomia no seu time sem perder controle do que importa?","Me conta de uma decisão que você delegou completamente — como você decidiu fazer isso?","Como você cria clareza sobre o que cada pessoa pode decidir sozinha?"]
+      ]
+    ],
+    // Sub 1: Obsessão com Tech
+    [
+      // Criterion 0: curiosidade por automação e dados
+      [
+        ["Você já automatizou ou simplificou algo no seu dia a dia — mesmo que fora do trabalho?","Qual ferramenta ou tecnologia você aprendeu por conta própria recentemente?","Como você usaria tecnologia para resolver um problema repetitivo que você tem hoje?"],
+        ["Conte de um processo manual que você automatizou ou simplificou com tecnologia.","Qual ferramenta ou tecnologia você aprendeu por conta própria nos últimos 12 meses?","Como você identifica o que deveria ser automatizado no seu trabalho?"],
+        ["Conte de um processo manual que você automatizou ou simplificou com tecnologia.","Qual ferramenta ou tecnologia você aprendeu por conta própria nos últimos 12 meses?","Como você pensa sobre o que deveria ser automatizado vs. feito manualmente?"],
+        ["Me conta de uma iniciativa de automação ou uso de dados que você liderou. Qual foi o impacto?","Como você garante que seu time adota tecnologia de forma estratégica, não só por modismo?","Qual é o maior gap tecnológico que você identifica na sua área atual?"],
+        ["Como você constrói cultura de tecnologia e dados num time que não é naturalmente técnico?","Me conta da iniciativa de automação ou dados de maior impacto que você já liderou.","Como você decide quais apostas tecnológicas vale a pena fazer?"]
+      ],
+      // Criterion 1: dados para embasar decisões
+      [
+        ["Você já usou algum dado ou número para defender uma ideia ou tomar uma decisão? Me conta.","Como você diferencia uma opinião de um fato?","Você já mudou de ideia porque um dado mostrou que você estava errado?"],
+        ["Me dê um exemplo onde os dados contradisseram sua intuição. O que você fez?","Como você decide quando tem dados insuficientes?","Qual foi a decisão mais importante que você embasou em dados?"],
+        ["Me dê um exemplo onde os dados contradisseram sua intuição. O que você fez?","Como você decide quando tem dados insuficientes?","Como você garante que suas decisões são baseadas em evidência e não em achismo?"],
+        ["Qual foi a decisão mais contraintuitiva que você tomou com base em dados?","Como você constrói a disciplina de dados em times que não são analíticos por natureza?","Me conta de uma vez que você forçou uma mudança de direção baseado em dados — com resistência."],
+        ["Como você garante que decisões estratégicas do seu time são baseadas em dados e não em HiPPO (highest paid person's opinion)?","Me conta da análise mais importante que você conduziu e que mudou o rumo de algo relevante.","Como você equilibra velocidade de decisão com rigor analítico?"]
+      ],
+      // Criterion 2: visão de substituição de processos manuais
+      [
+        ["Se você pudesse automatizar uma coisa chata que faz todo dia, o que seria?","Você já teve uma ideia de como fazer algo mais eficiente com tecnologia?","O que você acha que vai ser diferente no trabalho daqui a 5 anos por causa de tecnologia?"],
+        ["Qual processo do seu último trabalho você eliminaria com tecnologia?","Se tivesse 2 semanas para automatizar algo, o que escolheria e por quê?","Como você identifica o que deveria ser feito por um sistema vs. por uma pessoa?"],
+        ["Qual processo do seu último trabalho você eliminaria com tecnologia?","Se tivesse 2 semanas para automatizar algo, o que escolheria e por quê?","Como você prioriza o que automatizar primeiro?"],
+        ["Qual é o processo mais crítico da sua área que ainda é manual e não deveria ser?","Como você convence stakeholders a investir em automação quando o ROI não é imediato?","Me conta do maior projeto de transformação de processo que você liderou."],
+        ["Como você constrói uma visão de longo prazo de tecnologia para uma área de negócio?","Me conta do maior projeto de automação ou transformação digital que você conduziu.","Como você garante que o time pensa em escala desde o início, não só quando o problema já explodiu?"]
+      ]
+    ],
+    // Sub 2: Honestidade Intelectual
+    [
+      // Criterion 0: reconhece o que não sabe
+      [
+        ["Qual é o assunto mais importante para essa vaga que você ainda não domina?","Você se sente confortável dizendo 'não sei' quando não sabe? Me dá um exemplo.","Como você age quando alguém te pergunta algo que você não sabe a resposta?"],
+        ["Qual é a maior lacuna de conhecimento que você tem para essa vaga?","Me faz uma pergunta sobre algo que você ainda não entende bem da Mottu.","Como você age quando percebe que não sabe algo que deveria saber?"],
+        ["Qual é a maior lacuna de conhecimento que você tem para essa vaga?","Me faz uma pergunta sobre algo que você ainda não entende bem da Mottu.","Como você lida com situações onde você precisa agir mas não tem certeza?"],
+        ["Qual é a coisa mais importante que você ainda não sabe sobre [área] e deveria saber?","Me conta de uma situação onde você teve que admitir publicamente que estava errado.","Como você constrói credibilidade sendo honesto sobre suas limitações?"],
+        ["Como você modela humildade intelectual para o seu time?","Me conta de uma decisão que você tomou e só depois descobriu que não tinha as informações certas.","Como você cria um ambiente onde as pessoas admitem não saber sem medo?"]
+      ],
+      // Criterion 1: disposição real para aprender
+      [
+        ["Qual foi o maior salto de aprendizado que você teve recentemente? O que gerou isso?","Me conta de algo que você aprendeu por conta própria — sem ninguém te pedir.","Como você aprende quando não tem um professor ou curso?"],
+        ["Qual foi o maior salto de aprendizado que você teve nos últimos 2 anos?","Me conta de uma vez que você mudou de opinião radicalmente sobre algo profissional.","O que você está aprendendo hoje que não estava aprendendo 6 meses atrás?"],
+        ["Qual foi o maior salto de aprendizado que você teve nos últimos 2 anos?","Me conta de uma vez que você mudou de opinião radicalmente sobre algo profissional.","Como você mantém aprendizado contínuo no meio da rotina?"],
+        ["Qual foi a mudança de mentalidade mais difícil que você já fez na carreira?","Me conta de uma crença profissional que você tinha e abandonou — por quê?","Como você garante que continua aprendendo mesmo sendo sênior?"],
+        ["Como você instala cultura de aprendizado contínuo no seu time?","Me conta de uma vez que você foi aprendiz de alguém muito mais jovem ou menos experiente que você.","Como você equilibra executar com desenvolver o time?"]
+      ],
+      // Criterion 2: expertise profunda — foi além do básico
+      [
+        ["Qual é o assunto que você mais estudou por conta própria — por pura curiosidade?","Me ensina algo sobre [área da vaga] que você apostaria que eu não sei.","O que você fez para ir além do que foi ensinado em sala de aula ou no curso?"],
+        ["Qual é o recurso mais avançado que você consumiu na sua área?","Me ensina algo sobre [tema da vaga] que você apostaria que eu não sei.","O que você sabe hoje que não sabia 1 ano atrás — como você aprendeu?"],
+        ["Qual é o recurso mais avançado que você consumiu na sua área?","Me ensina algo sobre [tema da vaga] que você apostaria que eu não sei.","Como você vai além do óbvio quando quer entender algo a fundo?"],
+        ["Qual é o tema que você mais domina? Como você chegou a esse nível?","Me ensina algo sobre [área] que levou tempo para você entender de verdade.","Qual foi o investimento mais incomum que você fez no seu desenvolvimento?"],
+        ["Como você garante que o time tem profundidade e não vira generalista demais?","Qual é o conhecimento mais especializado que você tem e que poucos líderes na sua área têm?","Como você decide em que investir seu tempo de desenvolvimento com tanta coisa para aprender?"]
+      ]
+    ]
+  ],
+
+  // ── PILAR 2: RAIZ ──
+  [
+    // Sub 0: Mão na Graça
+    [
+      // Criterion 0: trabalho operacional sem considerar abaixo
+      [
+        ["Você já fez um trabalho repetitivo ou operacional sem reclamar porque era o que precisava ser feito?","Me conta de uma vez que você teve que fazer algo que não era glamoroso mas era necessário.","Como você age quando a tarefa mais importante do momento é entediante ou simples?"],
+        ["Me conta de uma tarefa operacional que você fez mesmo sendo para uma vaga mais sênior.","Como você reage quando a entrega mais importante do dia é uma tarefa simples?","Você já fez algo 'abaixo' da sua formação porque era o que o time precisava?"],
+        ["Me conta de uma tarefa operacional que você fez mesmo sendo sênior.","Como você age quando percebe que a coisa mais importante a fazer é a menos interessante?","Você já fez algo 'abaixo' do seu nível porque era o que o momento pedia?"],
+        ["Me conta de uma situação em que você abriu mão do trabalho estratégico para resolver algo na base.","Como você mantém humildade operacional sendo sênior?","Qual foi a última vez que você 'arregaçou as mangas' de verdade?"],
+        ["Como você garante que o time não tem síndrome de 'isso não é meu trabalho'?","Me conta de uma crise em que você foi pessoalmente operacional para resolver — e o que isso sinalizou para o time.","Como você modela mão na graça sem virar gargalo?"]
+      ],
+      // Criterion 1: ponta da lança — próximo ao problema real
+      [
+        ["Você já foi 'para o campo' entender como algo funciona de perto, ao invés de só ler sobre?","Me conta de uma vez que você foi pessoalmente ver um problema em vez de só ouvir sobre ele.","Como você aprende sobre um problema que é novo para você?"],
+        ["Qual foi a última vez que você fez algo 'abaixo' da sua posição e valeu a pena?","Como você se mantém próximo da realidade do cliente?","Me conta de uma vez que você foi pessoalmente entender um problema em vez de delegar a investigação."],
+        ["Qual foi a última vez que você fez algo 'abaixo' da sua posição e valeu a pena?","Como você se mantém próximo da realidade do cliente no dia a dia?","Me conta de uma situação em que ir 'na ponta' mudou sua visão do problema."],
+        ["Como você garante que não perde contato com a realidade operacional à medida que sobe?","Me conta da última vez que você foi pessoalmente à 'ponta' — o que você descobriu?","Como você usa o contato direto com o problema para tomar decisões melhores?"],
+        ["Como você garante que o time de liderança não fica isolado da realidade do cliente?","Me conta de uma decisão estratégica que você mudou porque foi pessoalmente ver o que estava acontecendo.","Como você cria rituais de proximidade com a operação num time de gestão?"]
+      ],
+      // Criterion 2: alta performance sob caos e pressão
+      [
+        ["Me conta do momento mais estressante que você já viveu num projeto ou trabalho em grupo. Como você performou?","Como você age quando tudo dá errado ao mesmo tempo?","Você já teve que tomar uma decisão importante com pouco tempo e pouca informação?"],
+        ["Me conte do período mais caótico que você viveu profissionalmente. Como você performou?","Como você toma decisões com pressão e pouca informação?","O que acontece com você quando o ambiente fica muito incerto?"],
+        ["Me conte do período mais caótico que você viveu profissionalmente. Como você performou?","Como você toma decisões com pressão e pouca informação?","Como você mantém performance quando tudo ao redor está instável?"],
+        ["Qual foi a situação de maior pressão que você já gerenciou? O que você fez diferente?","Como você mantém qualidade de decisão quando está sob estresse?","Me conta de uma crise que você conduziu do caos à resolução."],
+        ["Como você mantém o time performando em alta durante períodos de caos?","Me conta da maior crise que você gerenciou — o que você aprendeu sobre liderança sob pressão?","Como você decide o que priorizar quando tudo parece urgente ao mesmo tempo?"]
+      ]
+    ],
+    // Sub 1: Ombro a Ombro
+    [
+      // Criterion 0: ajudou sem obrigação formal
+      [
+        ["Você já ajudou um colega de faculdade ou projeto que estava travado, sem ninguém te pedir?","Me conta de uma vez que você fez algo por alguém sem receber nada em troca.","Como você age quando vê alguém do seu grupo precisando de ajuda?"],
+        ["Conte de uma vez que você ajudou alguém ou outra área sem que ninguém pedisse.","Você já abriu mão de algo seu para ajudar o time?","Como você age quando vê um colega com dificuldade mas não é sua responsabilidade ajudar?"],
+        ["Conte de uma vez que você ajudou alguém ou outra área sem que ninguém pedisse.","Você já abriu mão de algo seu para ajudar o time a avançar?","Como você age quando tem muito a fazer mas vê alguém precisando de ajuda?"],
+        ["Me conta de uma situação em que você deu suporte a uma área ou pessoa fora do seu escopo — o que te motivou?","Como você garante que seu time tem comportamento colaborativo, não territorial?","Qual foi o maior sacrifício que você fez para ajudar alguém ou outra área?"],
+        ["Como você cria cultura de colaboração genuína — não só de processos bem definidos?","Me conta de uma situação em que você ou seu time cruzou fronteiras organizacionais para resolver algo importante.","Como você equilibra ajudar outros com entregar o que você precisa entregar?"]
+      ],
+      // Criterion 1: relações de confiança genuína
+      [
+        ["Quem é a pessoa que mais confiou em você num projeto ou trabalho? Por quê?","Como você constrói um relacionamento com alguém com quem você não tem afinidade natural?","Me conta de uma amizade ou parceria que você construiu num contexto de trabalho ou estudo."],
+        ["Quem é a pessoa que mais confia em você profissionalmente e por quê?","Como você constrói relacionamento com quem você não tem afinidade natural?","Me conta de uma relação profissional que você construiu que ainda existe hoje."],
+        ["Quem é a pessoa que mais confia em você profissionalmente e por quê?","Como você constrói relacionamento com quem você não tem afinidade natural?","O que você faz para cultivar relações de confiança no trabalho?"],
+        ["Como você constrói confiança com stakeholders que têm agenda diferente da sua?","Me conta de uma relação profissional difícil que você conseguiu transformar.","Como você mantém relações genuínas à medida que sobe na carreira?"],
+        ["Como você constrói alinhamento e confiança entre times com objetivos conflitantes?","Me conta de uma relação com um par sênior ou executivo que você construiu do zero — como foi?","Como você garante que as relações no seu time são genuínas, não só funcionais?"]
+      ],
+      // Criterion 2: mobilizou pessoas para avançar
+      [
+        ["Você já convenceu um grupo de pessoas a fazer algo que elas não queriam fazer de início?","Me conta de uma vez que você liderou um grupo informal para resolver algo.","Como você age quando precisa de ajuda de pessoas que não te devem nada?"],
+        ["Me conta de uma vez que você precisou engajar várias pessoas para resolver algo difícil.","Como você age quando precisa de apoio de alguém sem obrigação de te ajudar?","Qual foi a iniciativa coletiva mais importante que você liderou?"],
+        ["Me conta de uma vez que você precisou engajar várias pessoas para resolver algo difícil.","Como você age quando precisa de apoio de alguém sem obrigação de te ajudar?","Como você cria urgência coletiva num time que está confortável?"],
+        ["Qual foi a mobilização mais difícil que você fez — com quanta resistência?","Como você garante alinhamento quando as pessoas têm incentivos diferentes?","Me conta de uma vez que você criou movimento em torno de uma causa sem ter autoridade formal."],
+        ["Como você alinha líderes com agendas conflitantes em torno de uma prioridade comum?","Me conta do maior movimento organizacional que você liderou — como você construiu adesão?","Como você garante que as pessoas se mobilizam pelo que é importante, não só pelo que é urgente?"]
+      ]
+    ],
+    // Sub 2: Liderança
+    [
+      // Criterion 0: padrão de contratar e desenvolver bem
+      [
+        ["Você já ajudou a recrutar ou selecionar alguém para um projeto ou time? Como foi?","Como você avaliaria se alguém é bom para uma equipe?","O que você olha nas pessoas quando escolhe com quem trabalhar?"],
+        ["O que você olha quando escolhe com quem trabalhar em equipe?","Você já indicou alguém que se destacou? O que você enxergou nela?","Como você ajuda colegas a se desenvolverem?"],
+        ["Qual foi a melhor pessoa que você contratou? O que você enxergou que outros não viam?","Você já recusou contratar alguém por conveniência?","Como você desenvolve as pessoas ao redor de você?"],
+        ["Qual foi a melhor contratação que você fez? O que foi diferente no processo?","Como você identifica talento que outros não enxergam?","Me conta de alguém que você desenvolveu que foi além do que você esperava."],
+        ["Como você constrói um time que é melhor do que você?","Me conta da sua melhor contratação e da pior — o que você aprendeu de cada uma?","Como você garante que seu time tem densidade de talento crescente?"]
+      ],
+      // Criterion 1: visão ambiciosa com execução real
+      [
+        ["Qual foi o projeto mais ambicioso que você se propôs a fazer? O que aconteceu?","Me conta de uma meta que você se colocou e que parecia difícil demais — você atingiu?","Como você age quando o objetivo parece grande demais?"],
+        ["Qual foi a visão mais ambiciosa que você perseguiu? Resultado real?","Me conta de uma vez que a execução foi muito diferente da visão — o que você fez?","Como você transforma uma ideia grande em ação concreta?"],
+        ["Qual foi a visão mais ambiciosa que você perseguiu? Resultado real?","Me conta de uma vez que você tinha uma visão clara mas a execução foi muito diferente.","Como você garante que ambição não vira só retórica?"],
+        ["Qual foi a visão mais difícil de vender que você perseguiu — e o resultado?","Como você calibra ambição com execução no dia a dia?","Me conta de uma iniciativa que você iniciou, que falhou parcialmente, e o que você aprendeu."],
+        ["Como você constrói visão compartilhada num time com perfis muito diferentes?","Me conta do maior projeto que você liderou do zero — como foi a jornada da visão à execução?","Como você mantém a ambição viva num time quando a execução fica dura?"]
+      ],
+      // Criterion 2: padrão de conduta sob pressão
+      [
+        ["Você já teve que tomar uma decisão que era certa mas inconveniente — o que aconteceu?","Me conta de uma situação em que você agiu com integridade mesmo sem ninguém olhando.","Como você age quando todos ao redor estão fazendo algo que você acha errado?"],
+        ["Você já enfrentou pressão para tomar uma decisão que achava errada? O que fez?","Manter seu padrão já teve custo real para você?","Como você define onde está sua linha — o que você não faria por nenhuma circunstância?"],
+        ["Você já enfrentou pressão para tomar uma decisão que achava errada? O que fez?","Manter seu padrão já teve custo real para você?","Como você mantém seus princípios quando a pressão por resultado é muito alta?"],
+        ["Qual foi a decisão mais difícil que você tomou por princípio, sabendo do custo?","Como você constrói reputação de integridade ao longo do tempo?","Me conta de uma situação em que seu padrão de conduta foi testado publicamente."],
+        ["Como você garante que o time mantém padrão de conduta sob pressão de resultado?","Me conta de uma situação em que você teve que proteger alguém ou algo de uma decisão errada vinda de cima.","Como você faz quando você mesmo está tentado a ceder num princípio importante?"]
+      ]
+    ]
+  ]
+];
+
+let selectedLevel = -1;
+
+function selectLevel(l){
+  selectedLevel = l;
+  for(let i=0;i<5;i++){
+    document.getElementById('lc'+i).classList.toggle('sel', i===l);
+  }
+}
+
+function getQuestions(pi, si, ci){
+  try { return LQ[pi][si][ci][selectedLevel] || LQ[pi][si][ci][2]; }
+  catch(e){ return []; }
+}
+
+const PILLARS = [
+  { name:"Obstinados", icon:"⚡", color:"var(--pillar-0)", idx:0, subs:[
+    { n:"Propósito", cs:[
+      { t:"Demonstra motivação genuína por impacto real na vida dos clientes, não apenas pela vaga em si",
+        q:["Conte sobre um projeto que te deixou orgulhoso — qual foi o impacto real para quem usou?","Por que essa vaga? O que te conecta com o problema que a Mottu resolve?","O que é sucesso para você em 2 anos nessa posição?"] },
+      { t:"Consegue articular como seu trabalho anterior gerou valor concreto para clientes ou usuários",
+        q:["Dê um exemplo de métrica que você gerou e que mudou algo para o cliente final.","Como você media impacto no cliente no seu último emprego?"] },
+      { t:"Demonstra vontade de construir legado de longo prazo, não apenas entregar tarefas",
+        q:["Conte de uma decisão pensando no longo prazo, mesmo sendo mais difícil no curto.","Qual legado você quer deixar na próxima empresa?"] }
+    ]},
+    { n:"Coragem", cs:[
+      { t:"Deu exemplos em que desafiou o status quo com argumentos sólidos",
+        q:["Conte de uma vez que você discordou do seu gestor. O que aconteceu?","Você já defendeu uma posição impopular mesmo sob pressão?"] },
+      { t:"Admite erros com clareza e sem rodeios, mostrando aprendizado real",
+        q:["Qual foi o maior erro profissional que você cometeu? O que mudou depois?","Me conta de uma vez que você estava errado e precisou reconhecer isso."] },
+      { t:"Demonstra tolerância zero à mediocridade — cobra padrão de si e dos outros",
+        q:["Como você age quando percebe que o padrão do time está baixo?","Você já perdeu paciência com mediocridade? Me conta um caso real."] }
+    ]},
+    { n:"Senso de Urgência", cs:[
+      { t:"Apresentou casos concretos de entrega acelerada sem comprometer qualidade",
+        q:["Me dê um exemplo de quando você acelerou uma entrega sem abrir mão da qualidade.","Você já priorizou diferente do processo para chegar mais rápido?"] },
+      { t:"Demonstra iniciativa própria — não espera ser solicitado em situações críticas",
+        q:["Me conta uma situação onde ninguém pediu mas você foi e resolveu assim mesmo.","Você já puxou um problema que não era seu porque viu que estava errado?"] },
+      { t:"Vai até o fim nos problemas que assume, sem abandonar no meio",
+        q:["Tem algum problema que você assumiu, foi muito mais difícil que o esperado, mas você foi até o fim?","Quando você desistiu de algo e hoje se arrepende?"] }
+    ]}
+  ]},
+  { name:"Profundos", icon:"🔍", color:"var(--pillar-1)", idx:1, subs:[
+    { n:"Profundidade", cs:[
+      { t:"Demonstra domínio no 'décimo nível' quando questionado sobre tema da área",
+        q:["Me explique [tema central da vaga] para um leigo. Agora para um especialista.","Qual detalhe a maioria ignora na sua área mas que faz toda a diferença?","Por que [conceito da área] funciona assim e não de outra forma?"] },
+      { t:"Destrincha problemas complexos de forma estruturada, chegando à causa raiz",
+        q:["Seu KPI principal caiu 30% hoje de manhã. Como você investigaria isso?","Descreva sua metodologia para resolver um problema que nunca viu antes."] },
+      { t:"Demonstra autonomia para resolver problemas sem depender de aprovação constante",
+        q:["Você já tomou uma decisão importante sem aprovação do gestor? O que aconteceu?","Qual foi a decisão mais arriscada que você tomou sozinho?"] }
+    ]},
+    { n:"Obsessão com Tech", cs:[
+      { t:"Curiosidade genuína por como dados e tech podem automatizar processos",
+        q:["Conte de um processo manual que você automatizou com tecnologia.","Qual ferramenta ou tecnologia você aprendeu por conta própria nos últimos 12 meses?"] },
+      { t:"Deu exemplos em que usou dados para embasar decisões — não apenas intuição",
+        q:["Me dê um exemplo onde os dados contradisseram sua intuição. O que você fez?","Como você decide quando tem dados insuficientes?"] },
+      { t:"Visão clara de como processos manuais devem ser substituídos por tech",
+        q:["Qual processo do seu último trabalho você eliminaria com tecnologia?","Se tivesse 2 semanas para automatizar algo, o que escolheria e por quê?"] }
+    ]},
+    { n:"Honestidade Intelectual", cs:[
+      { t:"Reconhece com clareza o que não sabe — humildade intelectual genuína",
+        q:["Qual é a maior lacuna de conhecimento que você tem para essa vaga?","Me faz uma pergunta sobre algo que você ainda não entende bem da Mottu."] },
+      { t:"Disposição real para aprender e evoluir — com exemplos práticos, não discurso",
+        q:["Qual foi o maior salto de aprendizado que você teve nos últimos 2 anos?","Me conta de uma vez que você mudou de opinião radicalmente sobre algo profissional."] },
+      { t:"Busca expertise profunda — demonstra ter ido além do básico em temas relevantes",
+        q:["Qual é o recurso mais avançado que você consumiu na sua área?","Me ensine algo sobre [tema da vaga] que você apostaria que eu não sei."] }
+    ]}
+  ]},
+  { name:"Raiz", icon:"🌿", color:"var(--pillar-2)", idx:2, subs:[
+    { n:"Mão na Graça", cs:[
+      { t:"Disposição para trabalho operacional sem considerar 'abaixo' do nível",
+        q:["Me conta de uma tarefa operacional que você fez mesmo sendo sênior.","Você já foi para o 'campo' para entender um problema de perto?"] },
+      { t:"Esteve na 'ponta da lança' — próximo ao problema real, não apenas gerenciando",
+        q:["Qual foi a última vez que você fez algo 'abaixo' da sua posição e valeu a pena?","Como você se mantém próximo da realidade do cliente?"] },
+      { t:"Alta performance mesmo sob caos, pressão ou ambiguidade elevada",
+        q:["Me conte do período mais caótico que você viveu profissionalmente. Como você performou?","Como você toma decisões com pressão e pouca informação?"] }
+    ]},
+    { n:"Ombro a Ombro", cs:[
+      { t:"Deu exemplos concretos em que ajudou sem que fosse obrigação formal",
+        q:["Conte de uma vez que você ajudou alguém sem que ninguém pedisse.","Você já abriu mão de algo seu para ajudar o time?"] },
+      { t:"Constrói relações de confiança genuína — não apenas transacionais",
+        q:["Quem é a pessoa que mais confia em você profissionalmente e por quê?","Como você constrói relacionamento com quem você não tem afinidade natural?"] },
+      { t:"Mobilizou pessoas para avançar em temas urgentes de forma colaborativa",
+        q:["Me conta de uma vez que você precisou engajar várias pessoas para resolver algo difícil.","Como você age quando precisa de apoio de alguém sem obrigação de te ajudar?"] }
+    ]},
+    { n:"Liderança", cs:[
+      { t:"Padrão de contratar e desenvolver pessoas melhores do que a média",
+        q:["Qual foi a melhor pessoa que você contratou? O que você enxergou que outros não viam?","Você já recusou contratar alguém por conveniência?"] },
+      { t:"Visões ambiciosas com execução real — não apenas discurso",
+        q:["Qual foi a visão mais ambiciosa que você perseguiu? Resultado real?","Me conta de uma vez que a execução foi muito diferente da visão."] },
+      { t:"Alto padrão de conduta mesmo sob pressão — não abre mão de princípios",
+        q:["Você já enfrentou pressão para tomar uma decisão que achava errada? O que fez?","Manter seu padrão já teve custo real para você?"] }
+    ]}
+  ]}
+];
+
+/* ══ STATE ══ */
+// Shared via localStorage (simulates same-file shared state)
+const STORE_KEY = 'mottu_br_v1';
+let G = { candidate:'', role:'', sessions:{} };
+
+function loadState(){ try{ const d=localStorage.getItem(STORE_KEY); if(d) G=JSON.parse(d); }catch(e){} }
+function saveState(){ try{ localStorage.setItem(STORE_KEY,JSON.stringify(G)); }catch(e){} }
+
+let SESSION = { pillarIdx:0, name:'', ratings:{}, notes:{}, elimFlags:{}, verdict:null, secs:0, running:false, iv:null };
+let selectedRole = -1;
+
+/* ══ HOME ══ */
+document.getElementById('hDate').valueAsDate = new Date();
+
+function selectRole(r){
+  selectedRole = r;
+  for(let i=0;i<4;i++){
+    const el=document.getElementById(`rc${i}`);
+    el.className='rc';
+    document.getElementById(`rcb${i}`).className='rc-badge';
+    if(i===r){ el.classList.add(`sel-${i<3?i:3}`); }
+  }
+  const btn=document.getElementById('goBtn');
+  btn.disabled=false;
+  const labels=['⚡ Entrar como Bar Raiser · Obstinados','🔍 Entrar como Bar Raiser · Profundos','🌿 Entrar como Bar Raiser · Raiz','📊 Abrir Painel de Consolidação'];
+  btn.textContent=labels[r];
+}
+
+function launch(){
+  if(selectedRole<0) return;
+  if(selectedLevel<0 && selectedRole<3){ showToast("Selecione o nível do candidato!"); return; }
+  loadState();
+  const cand=document.getElementById('hCand').value.trim()||'Candidato';
+  const role=document.getElementById('hRole').value.trim()||'—';
+  const name=document.getElementById('hName').value.trim()||'Entrevistador';
+
+  // Update shared candidate info
+  if(cand!=='Candidato'){ G.candidate=cand; G.role=role; saveState(); }
+
+  if(selectedRole===3){ openConsolidation(); return; }
+
+  // Load existing session for this pillar if any
+  const existing = G.sessions[selectedRole];
+  SESSION = existing ? {...existing, running:false, iv:null} : {
+    pillarIdx:selectedRole, name, level:selectedLevel, ratings:{}, notes:{}, elimFlags:{}, verdict:null, secs:0, running:false, iv:null
+  };
+  SESSION.name = name;
+  SESSION.level = selectedLevel;
+
+  document.getElementById('home').style.display='none';
+  document.getElementById('interview').style.display='block';
+  buildInterview(selectedRole);
+}
+
+function goHome(){
+  if(SESSION.running) stopTimer();
+  document.getElementById('interview').style.display='none';
+  document.getElementById('consolidation').style.display='none';
+  document.getElementById('home').style.display='block';
+}
+
+/* ══ INTERVIEW ══ */
+function buildInterview(pi){
+  const P = PILLARS[pi];
+  const lvlLabel = selectedLevel>=0 ? LEVELS[selectedLevel] : '';
+  document.getElementById('tbWho').innerHTML=`<strong>${SESSION.name}</strong>${lvlLabel ? ' <span style="color:var(--t3)">·</span> <span style="font-size:11px;background:var(--s3);border-radius:99px;padding:2px 8px;color:var(--t2)">' + lvlLabel + '</span>' : ''}`;
+  document.getElementById('tbPillarBadge').textContent=`${P.icon} ${P.name}`;
+  document.getElementById('tbPillarBadge').className=`tb-pillar-badge pb-${pi}`;
+
+  buildLeftNav(pi);
+  buildContent(pi);
+  buildRightPanel(pi);
+  updateInterviewScores(pi);
+}
+
+function buildLeftNav(pi){
+  const P=PILLARS[pi]; const nav=document.getElementById('leftnav'); nav.innerHTML='';
+  P.subs.forEach((sp,si)=>{
+    const item=document.createElement('div');
+    item.className='ln-item'; item.id=`ln-${si}`;
+    item.innerHTML=`${sp.n} <div style="display:flex;gap:4px;align-items:center">
+      <span class="ln-elim-count" id="lnelim-${si}"></span>
+      <span class="ln-badge" id="lnb-${si}">0/${sp.cs.length}</span></div>`;
+    item.onclick=()=>{ document.getElementById(`sub-${si}`).scrollIntoView({behavior:'smooth',block:'start'}); setActiveNav(si,pi); };
+    nav.appendChild(item);
+  });
+  setActiveNav(0,pi);
+}
+
+function setActiveNav(si,pi){ document.querySelectorAll('.ln-item').forEach((n,i)=>{ n.className='ln-item'; if(i===si) n.classList.add(`active-${pi}`); }); }
+
+function buildContent(pi){
+  const P=PILLARS[pi]; const col=document.getElementById('scrollCol'); col.innerHTML='';
+
+  // Pillar header
+  const hdr=document.createElement('div'); hdr.className='p-hdr';
+  hdr.innerHTML=`<div class="ph-icon ph-icon-${pi}">${P.icon}</div>
+    <div><div class="ph-name">${P.name}</div><div class="ph-sub">${P.subs.length} dimensões · ${P.subs.reduce((a,s)=>a+s.cs.length,0)} critérios · 30 minutos</div></div>
+    <div class="ph-progress">
+      <div class="php-bar"><div class="php-fill php-fill-${pi}" id="phfill-${pi}"></div></div>
+      <div class="php-txt" id="phtxt-${pi}">0 / ${P.subs.reduce((a,s)=>a+s.cs.length,0)}</div>
+    </div>`;
+  col.appendChild(hdr);
+
+  let gIdx=0;
+  P.subs.forEach((sp,si)=>{
+    const stitle=document.createElement('div');
+    stitle.className=`sub-hdr sub-hdr-${pi}`; stitle.id=`sub-${si}`;
+    stitle.textContent=sp.n; stitle.style.scrollMarginTop='24px';
+    col.appendChild(stitle);
+
+    sp.cs.forEach((c,ci)=>{
+      const key=`${si}-${ci}`; gIdx++;
+      const card=document.createElement('div');
+      card.className='ccard'; card.id=`card-${key}`;
+      const r=SESSION.ratings[key]; const elim=SESSION.elimFlags[key];
+      if(r) card.classList.add(`r-${r}`);
+      if(elim) card.classList.add('eliminated');
+
+      card.innerHTML=`
+        <div class="ccard-top">
+          <span class="c-num">${String(gIdx).padStart(2,'0')}</span>
+          <div class="c-body">
+            <div class="c-text">${c.t} <span class="elim-badge">eliminatório</span></div>
+
+          </div>
+          <div class="c-right">
+            <div class="rating-row">
+              <button class="rb ${r==='weak'?'on':''}" data-r="weak" onclick="rate('${key}','weak',this,${pi})">Fraco</button>
+              <button class="rb ${r==='ok'?'on':''}" data-r="ok" onclick="rate('${key}','ok',this,${pi})">Ok</button>
+              <button class="rb ${r==='strong'?'on':''}" data-r="strong" onclick="rate('${key}','strong',this,${pi})">Forte</button>
+              <button class="rb ${r==='na'?'on':''}" data-r="na" onclick="rate('${key}','na',this,${pi})">N/A</button>
+            </div>
+            <button class="elim-toggle ${elim?'on':''}" onclick="toggleElim('${key}',this,${pi})" id="etog-${key}">
+              <div class="et-box">${elim?'<svg width="8" height="6" viewBox="0 0 8 6"><path d="M1 3L3 5L7 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>':''}</div>
+              Marcar como eliminatório
+            </button>
+          </div>
+        </div>
+        <div class="c-questions" id="cq-${key}"></div>`;
+      col.appendChild(card);
+
+      // Build inline question+answer rows
+      const qWrap = document.getElementById('cq-'+key);
+      if(qWrap){
+        const qs = getQuestions(pi,si,ci);
+        qs.forEach((q,qi)=>{
+          const qkey = key+'-q'+qi;
+          const saved = SESSION.notes[qkey]||'';
+          const label = `${gIdx}.${qi+1}.`;
+          const item = document.createElement('div');
+          item.className='c-qitem';
+          item.innerHTML=`<div class="c-qitem-q"><span class="c-qitem-num">${label}</span>${q}</div>
+            <textarea class="c-qitem-a" placeholder="Resposta / evidência..." rows="2"
+              oninput="saveNote('${qkey}',this.value,${pi})">${saved}</textarea>`;
+          qWrap.appendChild(item);
+        });
+      }
+    });
+  });
+
+  // Scroll observer
+  const obs=new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ const parts=e.target.id.split('-'); if(parts[0]==='sub') setActiveNav(parseInt(parts[1]),pi); }}); },{threshold:.5,rootMargin:'-58px 0px -60% 0px'});
+  document.querySelectorAll('.sub-hdr').forEach(el=>obs.observe(el));
+}
+
+function buildRightPanel(pi){
+  const P=PILLARS[pi]; const rp=document.getElementById('rightpanel'); rp.innerHTML='';
+
+  // Mini progress
+  const total=P.subs.reduce((a,s)=>a+s.cs.length,0);
+  const prog=document.createElement('div'); prog.className='rp-block';
+  prog.innerHTML=`<div class="rp-lbl">Progresso — ${P.icon} ${P.name}</div>
+    <div class="rp-stat-row"><span class="rps-label">Fortes</span><span class="rps-val rps-strong" id="rpS">0</span></div>
+    <div class="rp-stat-row"><span class="rps-label">Ok</span><span class="rps-val rps-ok" id="rpO">0</span></div>
+    <div class="rp-stat-row"><span class="rps-label">Fracos</span><span class="rps-val rps-weak" id="rpW">0</span></div>
+    <div class="rp-stat-row"><span class="rps-label">Eliminatórios</span><span class="rps-val rps-elim" id="rpE">0</span></div>
+    <div class="mini-dots" id="rpDots">
+      ${Array(total).fill(0).map((_,i)=>`<div class="mdot" id="mdot-${i}"></div>`).join('')}
+    </div>`;
+  rp.appendChild(prog);
+
+  // Verdict
+  const vblock=document.createElement('div'); vblock.className='rp-block';
+  vblock.innerHTML=`<div class="rp-lbl">Seu veredicto</div>
+    <div class="v-btns">
+      <button class="vb" onclick="setVerdict('approve',this)"><span class="vdot vda"></span>Aprovar — eleva o bar</button>
+      <button class="vb" onclick="setVerdict('hold',this)"><span class="vdot vdh"></span>Em análise — dúvida razoável</button>
+      <button class="vb" onclick="setVerdict('reject',this)"><span class="vdot vdr"></span>Reprovar — abaixo do bar</button>
+    </div>`;
+  rp.appendChild(vblock);
+
+  // Restore verdict state
+  if(SESSION.verdict){
+    const map={approve:0,hold:1,reject:2};
+    const btns=vblock.querySelectorAll('.vb');
+    if(btns[map[SESSION.verdict]]) setVerdict(SESSION.verdict,btns[map[SESSION.verdict]]);
+  }
+
+  // Notes
+  const nblock=document.createElement('div'); nblock.className='rp-block';
+  nblock.innerHTML=`<div class="rp-lbl">Observações gerais</div>
+    <textarea class="gnotes" id="gNotes" placeholder="Síntese, red flags, impressões gerais sobre o pilar...">${SESSION.notes['__general']||''}</textarea>`;
+  rp.appendChild(nblock);
+  document.getElementById('gNotes').addEventListener('input',e=>{ SESSION.notes['__general']=e.target.value; persistSession(pi); });
+
+  // Submit
+  const sbtn=document.createElement('button'); sbtn.className='submit-btn';
+  sbtn.textContent='✓ Salvar feedback deste pilar';
+  sbtn.onclick=()=>submitSession(pi);
+  rp.appendChild(sbtn);
+
+  // AI assess button
+  const aiBtn=document.createElement('button'); aiBtn.className='ai-btn'; aiBtn.id='aiAssessBtn';
+  aiBtn.innerHTML=`<div class="ai-spin"></div><span class="ai-btn-txt">✨ Avaliar com IA via Granola</span>`;
+  aiBtn.onclick=()=>openGranola(pi);
+  rp.appendChild(aiBtn);
+}
+
+function rate(key,r,btn,pi){
+  const card=document.getElementById(`card-${key}`);
+  const prev=SESSION.ratings[key];
+  if(prev===r){ delete SESSION.ratings[key]; card.className='ccard'+(SESSION.elimFlags[key]?' eliminated':''); btn.closest('.rating-row').querySelectorAll('.rb').forEach(b=>b.classList.remove('on')); }
+  else { SESSION.ratings[key]=r; card.className=`ccard r-${r}`+(SESSION.elimFlags[key]?' eliminated':''); btn.closest('.rating-row').querySelectorAll('.rb').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); }
+  persistSession(pi);
+  updateInterviewScores(pi);
+}
+
+function toggleElim(key,btn,pi){
+  SESSION.elimFlags[key]=!SESSION.elimFlags[key];
+  btn.classList.toggle('on',SESSION.elimFlags[key]);
+  btn.querySelector('.et-box').innerHTML=SESSION.elimFlags[key]?'<svg width="8" height="6" viewBox="0 0 8 6"><path d="M1 3L3 5L7 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>':'';
+  const card=document.getElementById(`card-${key}`);
+  const r=SESSION.ratings[key];
+  card.className=`ccard${r?' r-'+r:''}${SESSION.elimFlags[key]?' eliminated':''}`;
+  persistSession(pi);
+  updateInterviewScores(pi);
+}
+
+function saveNote(key,v,pi){ SESSION.notes[key]=v; persistSession(pi); }
+
+function setVerdict(v,btn){
+  SESSION.verdict=v;
+  btn.closest('.v-btns').querySelectorAll('.vb').forEach(b=>b.className='vb');
+  btn.classList.add(`sel-${v}`);
+}
+
+function updateInterviewScores(pi){
+  const P=PILLARS[pi];
+  let tot=0,rated=0,S=0,O=0,W=0,E=0,gIdx=0;
+  P.subs.forEach((sp,si)=>{
+    let subR=0;
+    sp.cs.forEach((_,ci)=>{
+      const key=`${si}-${ci}`;
+      tot++;
+      const r=SESSION.ratings[key]; const e=SESSION.elimFlags[key];
+      if(r){ rated++; subR++; if(r==='strong')S++; else if(r==='ok')O++; else W++; }
+      if(e) E++;
+      const dot=document.getElementById(`mdot-${gIdx}`);
+      if(dot){ dot.className='mdot'; if(e)dot.classList.add('elim'); else if(r && r!=='na')dot.classList.add(r); else if(r==='na')dot.style.opacity='.25'; else dot.style.opacity=''; }
+      gIdx++;
+    });
+    const badge=document.getElementById(`lnb-${si}`);
+    if(badge) badge.textContent=`${subR}/${sp.cs.length}`;
+    const ec=document.getElementById(`lnelim-${si}`);
+    if(ec){ const elimInSub=sp.cs.filter((_,ci)=>SESSION.elimFlags[`${si}-${ci}`]).length; ec.textContent=elimInSub>0?`⚠${elimInSub}`:''; ec.classList.toggle('on',elimInSub>0); }
+  });
+
+  const pct=tot>0?Math.round(rated/tot*100):0;
+  el('rpS').textContent=S; el('rpO').textContent=O; el('rpW').textContent=W; el('rpE').textContent=E;
+  el('spN').textContent=S; el('spP').textContent=pct+'% avaliados';
+  el('spN').style.color=S>=6?'var(--g)':S>=3?'var(--ok)':'var(--t1)';
+  el('phfill-'+pi).style.width=pct+'%'; el('phtxt-'+pi).textContent=`${rated} / ${tot}`;
+}
+
+function persistSession(pi){
+  loadState();
+  G.sessions[pi]={ ...SESSION, running:false, iv:null };
+  saveState();
+}
+
+function submitSession(pi){
+  if(!SESSION.verdict){ showToast('Defina um veredicto antes de salvar!'); return; }
+  persistSession(pi);
+  showToast('✓ Feedback salvo! Outros entrevistadores podem ver no painel de consolidação.');
+  setTimeout(()=>goHome(),1200);
+}
+
+/* ══ TIMER ══ */
+function pad(n){return String(Math.floor(n)).padStart(2,'0')}
+function fmt(s){return`${pad(s/60)}:${pad(s%60)}`}
+function toggleTimer(){ SESSION.running?stopTimer():startTimer(); }
+function startTimer(){
+  SESSION.running=true;
+  el('tBtn').textContent='⏸'; el('tBtn').classList.add('on');
+  SESSION.iv=setInterval(()=>{
+    SESSION.secs++;
+    const t=el('tClock'); t.textContent=fmt(SESSION.secs);
+    t.className='tp-t'+(SESSION.secs>1800?' over':SESSION.secs>1500?' warn':'');
+  },1000);
+}
+function stopTimer(){
+  SESSION.running=false; clearInterval(SESSION.iv);
+  el('tBtn').textContent='▶'; el('tBtn').classList.remove('on');
+}
+function resetTimer(){ stopTimer(); SESSION.secs=0; el('tClock').textContent='00:00'; el('tClock').className='tp-t'; }
+
+/* ══ CONSOLIDATION ══ */
+function openConsolidation(){
+  loadState();
+  document.getElementById('home').style.display='none';
+  document.getElementById('consolidation').style.display='block';
+  renderDash();
+}
+
+function renderDash(){
+  const cand=G.candidate||document.getElementById('hCand').value||'Candidato';
+  const role=G.role||document.getElementById('hRole').value||'—';
+  el('dCandInfo').innerHTML=`<strong>${cand}</strong> · ${role}`;
+
+  const body=el('dashBody'); body.innerHTML='';
+
+  // Collect all eliminations
+  const allElims=[];
+  let totalStrong=0,totalRated=0,totalCriteria=0;
+  let verdicts=[]; let submittedCount=0;
+
+  PILLARS.forEach((P,pi)=>{
+    const sess=G.sessions[pi];
+    let ps=0,pR=0,pT=P.subs.reduce((a,s)=>a+s.cs.length,0);
+    if(sess){
+      submittedCount++;
+      if(sess.verdict) verdicts.push(sess.verdict);
+      P.subs.forEach((sp,si)=>sp.cs.forEach((c,ci)=>{
+        const key=`${si}-${ci}`;
+        if(sess.ratings[key] && sess.ratings[key]!=='na'){ pR++; if(sess.ratings[key]==='strong') ps++; }
+        if(sess.elimFlags&&sess.elimFlags[key]) allElims.push({pillar:P.name,text:c.t,interviewer:sess.name||'—'});
+      }));
+    }
+    totalStrong+=ps; totalRated+=pR; totalCriteria+=pT;
+  });
+
+  // Auto-verdict logic
+  const hasElim=allElims.length>0;
+  const rejectCount=verdicts.filter(v=>v==='reject').length;
+  const approveCount=verdicts.filter(v=>v==='approve').length;
+  const holdCount=verdicts.filter(v=>v==='hold').length;
+  let autoVerdict='pending';
+  if(submittedCount===3){
+    if(hasElim||rejectCount>=2) autoVerdict='reject';
+    else if(approveCount>=2) autoVerdict='approve';
+    else autoVerdict='hold';
+  }
+
+  // STATS
+  const pct=totalCriteria>0?Math.round(totalRated/totalCriteria*100):0;
+  const stats=document.createElement('div'); stats.className='dash-stats';
+  stats.innerHTML=`
+    <div class="dstat"><div class="dstat-label">Feedbacks recebidos</div>
+      <div class="dstat-val ${submittedCount===3?'green':submittedCount>0?'orange':''}">${submittedCount}/3</div>
+      <div class="dstat-sub">bar raisers</div></div>
+    <div class="dstat"><div class="dstat-label">Critérios fortes</div>
+      <div class="dstat-val ${totalStrong>=14?'green':totalStrong>=8?'orange':'red'}">${totalStrong}</div>
+      <div class="dstat-sub">de ${totalCriteria} avaliados</div></div>
+    <div class="dstat"><div class="dstat-label">Critérios avaliados</div>
+      <div class="dstat-val">${pct}%</div>
+      <div class="dstat-sub">${totalRated}/${totalCriteria} total</div></div>
+    <div class="dstat"><div class="dstat-label">Eliminatórios</div>
+      <div class="dstat-val ${allElims.length>0?'red':''}">${allElims.length}</div>
+      <div class="dstat-sub">critérios marcados</div></div>`;
+  body.appendChild(stats);
+
+  // VERDICT
+  const vi=document.createElement('div'); vi.className='verdict-indicator';
+  const vMap={approve:'✅ Aprovado — contratar',hold:'⏸ Em análise — debrief necessário',reject:'❌ Reprovado — não contratar',pending:'⏳ Aguardando todos os feedbacks'};
+  const vClass={approve:'vi-approve',hold:'vi-hold',reject:'vi-reject',pending:'vi-pending'};
+  const vDiv=document.createElement('div'); vDiv.className='vi-val '+vClass[autoVerdict]; vDiv.textContent=vMap[autoVerdict];
+  vi.innerHTML=`<div><div class="dstat-label" style="margin-bottom:4px">Veredicto consolidado</div>
+    <div style="font-size:12px;color:var(--t3)">Baseado em ${verdicts.length} votos · ${hasElim?'critério eliminatório marcado':'sem eliminatórios'}</div></div>`;
+  vi.appendChild(vDiv);
+  body.appendChild(vi);
+
+  // ELIM BANNER
+  if(allElims.length>0){
+    const banner=document.createElement('div'); banner.className='elim-banner on';
+    banner.innerHTML=`<div class="eb-title">⚠ Critérios eliminatórios identificados</div>
+      <ul class="eb-list">${allElims.map(e=>`<li><strong>${e.pillar}</strong> · ${e.text} <em style="color:var(--t3)">(${e.interviewer})</em></li>`).join('')}</ul>`;
+    body.appendChild(banner);
+  }
+
+  // PILLAR COLUMNS
+  const cols=document.createElement('div'); cols.className='pillar-cols';
+  PILLARS.forEach((P,pi)=>{
+    const sess=G.sessions[pi];
+    const col=document.createElement('div'); col.className='pc';
+    const total=P.subs.reduce((a,s)=>a+s.cs.length,0);
+    let pR=0;
+    if(sess) P.subs.forEach((sp,si)=>sp.cs.forEach((_,ci)=>{ if(sess.ratings[`${si}-${ci}`]) pR++; }));
+    const pct2=total>0?Math.round(pR/total*100):0;
+    const vPill=sess?.verdict?`<div class="pc-verdict-pill pcvp-${sess.verdict}">${{approve:'✅ Aprovar',hold:'⏸ Em análise',reject:'❌ Reprovar'}[sess.verdict]}</div>`:`<div class="pc-verdict-pill pcvp-pending">Aguardando</div>`;
+
+    col.innerHTML=`<div class="pc-header">
+      <div>
+        <div class="pch-name">${P.icon} ${P.name}</div>
+        <div class="pch-bar-wrap"><div class="pch-bar"><div class="pch-fill pch-fill-${pi}" style="width:${pct2}%"></div></div></div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--t3)">${pR}/${total}</div>
+      </div></div>
+      <div class="pc-body">
+        <div class="pc-interviewer ${sess?'submitted':''}"><div class="dot"></div>${sess?sess.name||'—':'Não submetido'}</div>
+        ${vPill}
+        ${sess?renderCriteriaSummary(P,pi,sess):`<div class="pc-empty">Aguardando feedback do bar raiser</div>`}
+        ${sess?.notes?.['__general']?`<div style="margin-top:12px;padding:10px;background:var(--s2);border-radius:8px;font-size:11px;color:var(--t2);font-style:italic;line-height:1.6">"${sess.notes['__general']}"</div>`:''}
+      </div>`;
+    cols.appendChild(col);
+  });
+  body.appendChild(cols);
+
+  // EXPORT
+  const expRow=document.createElement('div'); expRow.className='export-row';
+  expRow.innerHTML=`<button class="exp-btn" onclick="exportAll()">↓ Exportar consolidação completa</button>`;
+  body.appendChild(expRow);
+
+  // Auto-refresh every 8s if not complete
+  if(submittedCount<3) setTimeout(()=>{ loadState(); renderDash(); },8000);
+}
+
+function renderCriteriaSummary(P,pi,sess){
+  let html=''; let gIdx=0;
+  P.subs.forEach((sp,si)=>{
+    html+=`<div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--t2);margin:12px 0 6px;padding-top:8px;border-top:1px solid var(--b1)">${sp.n}</div>`;
+    sp.cs.forEach((c,ci)=>{
+      gIdx++;
+      const key=`${si}-${ci}`;
+      const r=sess.ratings?.[key]; const e=sess.elimFlags?.[key];
+      const rLabel=r?(r==='na'?'N/A':r.charAt(0).toUpperCase()+r.slice(1)):'—';
+      const rClass=r?(r==='na'?'csr-none':(`csr-${r}`)):'csr-none';
+      // Collect per-question answers with numbering
+      const qs = (typeof LQ !== 'undefined' && sess.level>=0) ? (LQ[pi]?.[si]?.[ci]?.[sess.level] || LQ[pi]?.[si]?.[ci]?.[2] || []) : [];
+      const qNotes = qs.map((q,qi)=>({ num:`${gIdx}.${qi+1}.`, q, a:sess.notes?.[key+'-q'+qi]||'' }));
+      html+=`<div class="cs-row">
+        <span class="csr-rating ${rClass}">${rLabel}</span>
+        <div class="cs-text"><strong style="font-size:10px;color:var(--t3);font-family:'JetBrains Mono',monospace">${gIdx}.</strong> ${c.t}${e?'<span class="csr-elim">eliminatório</span>':''}
+          ${qNotes.map(x=>`<div class="csr-note" style="${x.a?'':'opacity:.4'}">
+            <span style="color:var(--g);font-family:'JetBrains Mono',monospace;font-size:10px">${x.num}</span>
+            <em style="color:var(--t3)">${x.q}</em>
+            ${x.a?`<br><span style="color:var(--t1)">${x.a}</span>`:''}
+          </div>`).join('')}
+        </div></div>`;
+    });
+  });
+  return html;
+}
+
+function exportAll(){
+  loadState();
+  const cand=G.candidate||'Candidato'; const role=G.role||'—';
+  let txt=`BAR RAISER · MOTTU — CONSOLIDAÇÃO\n${'='.repeat(50)}\nCandidato: ${cand}\nVaga:      ${role}\nData:      ${new Date().toLocaleDateString('pt-BR')}\n\n`;
+  const rmap={strong:'[FORTE]',ok:'[OK   ]',weak:'[FRACO]',na:'[N/A  ]'};
+  const vmap={approve:'✅ APROVAR',hold:'⏸ EM ANÁLISE',reject:'❌ REPROVAR'};
+  PILLARS.forEach((P,pi)=>{
+    const sess=G.sessions[pi];
+    txt+=`\n${'─'.repeat(50)}\n${P.icon} ${P.name.toUpperCase()}\nEntrevistador: ${sess?.name||'Não submetido'}\nVeredicto: ${sess?.verdict?vmap[sess.verdict]:'—'}\n${'─'.repeat(50)}\n`;
+    if(sess){
+      let expIdx=0;
+      P.subs.forEach((sp,si)=>{
+        txt+=`\n  ── ${sp.n} ──\n`;
+        sp.cs.forEach((c,ci)=>{
+          expIdx++;
+          const key=`${si}-${ci}`; const r=sess.ratings?.[key]; const e=sess.elimFlags?.[key];
+          txt+=`\n  ${String(expIdx).padStart(2,'0')}. [${r?rmap[r].trim():'     '}]${e?' ⚠ ELIMINATÓRIO':''} ${c.t}\n`;
+          // All questions + answers
+          const ql = sess.level>=0 ? (LQ?.[pi]?.[si]?.[ci]?.[sess.level] || LQ?.[pi]?.[si]?.[ci]?.[2] || []) : [];
+          ql.forEach((q,qi)=>{
+            const a=sess.notes?.[key+'-q'+qi];
+            txt+=`\n      ${expIdx}.${qi+1}. ${q}\n`;
+            txt+=`           → ${a||'(sem resposta)'}\n`;
+          });
+        });
+      });
+      if(sess.notes?.['__general']) txt+=`\n  Observações gerais: "${sess.notes['__general']}"\n`;
+    }
+  });
+  txt+=`\n${'='.repeat(50)}\n`;
+  const b=new Blob([txt],{type:'text/plain;charset=utf-8'});
+  const u=URL.createObjectURL(b);
+  const a=document.createElement('a'); a.href=u; a.download=`barraiser-${cand.replace(/\s+/g,'-').toLowerCase()}.txt`;
+  a.click(); URL.revokeObjectURL(u);
+  showToast('Consolidação exportada!');
+}
+
+function el(id){return document.getElementById(id)}
+function showToast(msg){
+  const t=el('toast'); t.textContent=msg; t.classList.add('on');
+  setTimeout(()=>t.classList.remove('on'),3500);
+}
+
+// Question popup — single global popover, fixed to viewport
+let _activeTrig = null;
+function toggleQ(trig){
+  const questions = JSON.parse(trig.dataset.questions);
+  const pop = document.getElementById('qPopover');
+  // Clicking same trigger closes it
+  if(_activeTrig === trig && pop.classList.contains('open')){
+    pop.classList.remove('open');
+    trig.classList.remove('active');
+    trig.textContent='💬 perguntas sugeridas';
+    _activeTrig = null;
+    return;
+  }
+  // Reset previous
+  if(_activeTrig){
+    _activeTrig.classList.remove('active');
+    _activeTrig.textContent='💬 perguntas sugeridas';
+  }
+  _activeTrig = trig;
+  trig.classList.add('active');
+  trig.textContent='✕ fechar';
+
+  // Build content
+  pop.innerHTML = `<div class="cqp-lbl">Perguntas para capturar este critério</div>
+    <ul class="cqp-ul">${questions.map(q=>`<li>${q}</li>`).join('')}</ul>`;
+
+  // Position: below the trigger, clamped to viewport
+  const rect = trig.getBoundingClientRect();
+  const popW = 360; const margin = 12;
+  let left = rect.left;
+  let top = rect.bottom + 8;
+  // Clamp horizontally
+  if(left + popW + margin > window.innerWidth) left = window.innerWidth - popW - margin;
+  if(left < margin) left = margin;
+  // If below viewport, show above instead
+  if(top + 200 > window.innerHeight) top = rect.top - 8 - Math.min(300, window.innerHeight * 0.4);
+  pop.style.left = left + 'px';
+  pop.style.top = top + 'px';
+  pop.classList.add('open');
+}
+// Close on outside click
+document.addEventListener('click', e => {
+  if(!e.target.classList.contains('c-q-trig')){
+    const pop = document.getElementById('qPopover');
+    pop.classList.remove('open');
+    if(_activeTrig){ _activeTrig.classList.remove('active'); _activeTrig.textContent='💬 perguntas sugeridas'; _activeTrig=null; }
+  }
+});
+
+/* ══ AI ASSESSMENT ══ */
+let _aiPillarIdx = 0;
+
+const MOCK_MEETINGS = [
+  { id:'m1', title:'', meta:'Hoje · 14h32 · 54 min', match:true },
+  { id:'m2', title:'Sync semanal — Supply', meta:'Hoje · 10h00 · 38 min', match:false },
+  { id:'m3', title:'Review de métricas', meta:'Ontem · 17h15 · 42 min', match:false },
+];
+
+const MOCK_TRANSCRIPT = `Entrevistador: Obrigado por estar aqui. Pode se apresentar brevemente?
+
+Candidato: Claro. Sou formado em Engenharia, trabalhei 4 anos em operações em uma logtech, onde ficava muito próximo da operação real — tanto no back office quanto no campo. Tenho um histórico de entrar em processos caóticos e criar estrutura.
+
+Entrevistador: Me conta de um momento em que você foi contra o consenso da equipe. O que aconteceu?
+
+Candidato: Numa entrega de OKRs, a equipe queria apresentar um número favorável mas que escondia uma distorção de metodologia. Eu parei a reunião e coloquei isso na mesa. Foi incômodo, mas no final o CEO agradeceu. Aprendi que prefiro o desconforto do curto prazo ao risco de longo prazo.
+
+Entrevistador: Você já abriu mão de uma prioridade pessoal para ajudar o time em algo urgente?
+
+Candidato: Sim. Numa Black Friday eu cancelei minha viagem de aniversário para ficar de plantão. Não porque alguém pediu — eu vi que o time estava sobrecarregado e decidi ficar. O resultado foi o melhor da história da empresa naquele período.
+
+Entrevistador: Como você lida com alta pressão e pouca informação ao mesmo tempo?
+
+Candidato: Coloco o que sei em cima da mesa, decido com o que tenho e ajusto conforme chega mais dado. Odeio paralisia por análise. Uma vez tivemos uma crise operacional às 23h sem manual de crise. Improvisei um protocolo na hora, funcionou e depois virou o processo oficial.
+
+Entrevistador: Qual foi o maior impacto que você gerou na carreira, medido em algo concreto?
+
+Candidato: Reduzi o custo de última milha em 18% em 6 meses reestruturando a malha de distribuição. Isso representou R$ 4 milhões de saving anual. Fiz isso sem contratar ninguém novo — só reorganizando o que já existia.`;
+
+function openGranola(pi){
+  _aiPillarIdx = pi;
+  const cand = G.candidate || document.getElementById('hCand').value || 'Candidato';
+  const overlay = document.getElementById('granolaOverlay');
+  const meetings = document.getElementById('gmMeetings');
+  meetings.innerHTML = '';
+  MOCK_MEETINGS.forEach(m => {
+    const title = m.match ? `Entrevista · ${cand}` : m.title || m.meta;
+    const div = document.createElement('div');
+    div.className = 'gm-meeting' + (m.match ? ' sel' : '');
+    div.innerHTML = `<div class="gm-mtitle">${title}${m.match?'<span class="gm-badge">sugerida</span>':''}</div><div class="gm-mmeta">${m.meta}</div>`;
+    div.onclick = () => {
+      document.querySelectorAll('.gm-meeting').forEach(x=>x.classList.remove('sel'));
+      div.classList.add('sel');
+      if(m.match) document.getElementById('gmTranscript').value = MOCK_TRANSCRIPT;
+    };
+    meetings.appendChild(div);
+  });
+  if(MOCK_MEETINGS[0].match) document.getElementById('gmTranscript').value = MOCK_TRANSCRIPT;
+  overlay.classList.add('open');
+}
+
+function closeGranola(){
+  document.getElementById('granolaOverlay').classList.remove('open');
+}
+
+async function runAIAssessment(){
+  const transcript = document.getElementById('gmTranscript').value.trim();
+  if(!transcript){ showToast('Cole ou importe uma transcrição primeiro.'); return; }
+
+  const btn = document.getElementById('gmAnalyzeBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+  document.getElementById('gmAnalyzeTxt').textContent = 'Analisando...';
+
+  const pi = _aiPillarIdx;
+  const P = PILLARS[pi];
+  const level = SESSION.level >= 0 ? LEVELS[SESSION.level] : 'Pleno';
+
+  // Build criteria list for prompt
+  let criteriaList = '';
+  let idx = 0;
+  P.subs.forEach((sp, si) => {
+    sp.cs.forEach((c, ci) => {
+      criteriaList += `${idx}. key="${si}-${ci}" critério="${c.t}"\n`;
+      idx++;
+    });
+  });
+
+  const systemPrompt = `Você é um avaliador sênior de Bar Raiser da Mottu. Analise a transcrição da entrevista e avalie cada critério do pilar "${P.name}" com base nas evidências encontradas. Responda APENAS em JSON válido, sem markdown.`;
+
+  const userPrompt = `Candidato avaliado no nível: ${level}
+Pilar: ${P.name}
+
+Critérios a avaliar (use exatamente as keys fornecidas):
+${criteriaList}
+
+Transcrição da entrevista:
+${transcript}
+
+Retorne JSON com esta estrutura exata:
+{
+  "ratings": { "0-0": "strong"|"ok"|"weak"|"na", "0-1": "...", ... },
+  "elimFlags": { "0-0": true|false, ... },
+  "verdict": "approve"|"hold"|"reject",
+  "generalNotes": "síntese de 2-3 frases sobre o candidato neste pilar",
+  "highlights": ["evidência concreta 1", "evidência concreta 2"]
+}
+
+Regras:
+- "strong": evidência clara e robusta do comportamento
+- "ok": evidência presente mas superficial ou inconsistente
+- "weak": ausência de evidência ou contradição clara
+- "na": critério não foi possível avaliar pela transcrição
+- elimFlags: true somente se houver evidência ativa de comportamento contraproducente grave
+- Seja conservador com eliminatórios — use apenas quando há evidência real, não ausência`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content.map(i=>i.text||'').join('');
+    const result = JSON.parse(text.replace(/```json|```/g,'').trim());
+
+    // Apply ratings
+    Object.entries(result.ratings||{}).forEach(([key, r]) => {
+      SESSION.ratings[key] = r;
+      const card = document.getElementById(`card-${key}`);
+      if(card){
+        card.className = `ccard r-${r}`;
+        card.querySelectorAll('.rb').forEach(b => {
+          b.classList.toggle('on', b.dataset.r === r);
+        });
+      }
+    });
+
+    // Apply elim flags
+    Object.entries(result.elimFlags||{}).forEach(([key, v]) => {
+      if(v){
+        SESSION.elimFlags[key] = true;
+        const card = document.getElementById(`card-${key}`);
+        const tog = document.getElementById(`etog-${key}`);
+        if(card){ const r=SESSION.ratings[key]; card.className=`ccard${r?' r-'+r:''} eliminated`; }
+        if(tog){ tog.classList.add('on'); tog.querySelector('.et-box').innerHTML='<svg width="8" height="6" viewBox="0 0 8 6"><path d="M1 3L3 5L7 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>'; }
+      }
+    });
+
+    // Apply verdict
+    if(result.verdict){
+      SESSION.verdict = result.verdict;
+      const vmap = {approve:0,hold:1,reject:2};
+      const btns = document.querySelectorAll('.v-btns .vb');
+      btns.forEach(b=>b.className='vb');
+      if(btns[vmap[result.verdict]]) btns[vmap[result.verdict]].classList.add(`sel-${result.verdict}`);
+    }
+
+    // Apply general notes
+    if(result.generalNotes){
+      const gn = document.getElementById('gNotes');
+      if(gn){ gn.value = result.generalNotes; SESSION.notes['__general'] = result.generalNotes; }
+    }
+
+    persistSession(pi);
+    updateInterviewScores(pi);
+    closeGranola();
+    showToast(`✨ IA preencheu ${Object.keys(result.ratings||{}).length} critérios automaticamente!`);
+
+  } catch(e) {
+    showToast('Erro na análise. Verifique a transcrição e tente novamente.');
+  } finally {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    document.getElementById('gmAnalyzeTxt').textContent = '✨ Analisar e preencher ratings';
+  }
+}
+
+// Close modal on overlay click
+document.getElementById('granolaOverlay').addEventListener('click', e => {
+  if(e.target === document.getElementById('granolaOverlay')) closeGranola();
+});
+
+// Init
+loadState();
+document.getElementById('hDate').valueAsDate=new Date();
+</script>
+</body>
+</html>
